@@ -15,10 +15,8 @@ import type {
 
 const selectJobApplicationsState = (state: RootState) => state.jobApplications;
 
-export const selectAllJobApplications = createSelector(
-  [selectJobApplicationsState],
-  (jobApplicationsState): JobApplication[] => jobApplicationsState.applications
-);
+export const selectAllJobApplications = (state: RootState): JobApplication[] =>
+  state.jobApplications.applications;
 
 export const selectJobApplicationsStatus = createSelector(
   [selectJobApplicationsState],

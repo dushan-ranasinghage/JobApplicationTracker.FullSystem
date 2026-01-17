@@ -5,6 +5,7 @@
  * @copyright Copyright 2026 - JobApplicationTracker.Client All Rights Reserved.
  */
 
+import type { JobApplicationStatus } from '../../../redux/types/jobApplications';
 import { JobApplicationStatusEnum } from '../../../redux/types/jobApplications';
 
 export const getStatusNumber = (status: string | number): number => {
@@ -24,6 +25,31 @@ export const getStatusNumber = (status: string | number): number => {
             return JobApplicationStatusEnum.Rejected;
         default:
             return 0;
+    }
+};
+
+export const getStatusString = (status: string | number): JobApplicationStatus => {
+    if (typeof status === 'string') {
+        // Validate that it's a valid status string
+        const validStatuses: JobApplicationStatus[] = ['Applied', 'Interview', 'Offer', 'Accepted', 'Rejected'];
+        if (validStatuses.includes(status as JobApplicationStatus)) {
+            return status as JobApplicationStatus;
+        }
+        return 'Applied'; // Default fallback
+    }
+    switch (status) {
+        case JobApplicationStatusEnum.Applied:
+            return 'Applied';
+        case JobApplicationStatusEnum.Interview:
+            return 'Interview';
+        case JobApplicationStatusEnum.Offer:
+            return 'Offer';
+        case JobApplicationStatusEnum.Accepted:
+            return 'Accepted';
+        case JobApplicationStatusEnum.Rejected:
+            return 'Rejected';
+        default:
+            return 'Applied';
     }
 };
 

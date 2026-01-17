@@ -27,16 +27,21 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useState } from 'react';
 
-import type {
-  JobApplication,
-  JobApplicationStatus,
-} from '../../redux/types/jobApplications';
+import type { JobApplication } from '../../redux/types/jobApplications';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import { getStatusColor, getStatusDisplayName } from './utils/statusUtils';
 import EditJobApplicationModal from './components/EditJobApplicationModal';
 import DeleteConfirmationDialog from './components/DeleteConfirmationDialog';
 import CreateJobApplicationModal from './components/CreateJobApplicationModal';
+import { useAppDispatch } from '../../redux/store';
+import {
+  createJobApplication,
+  updateJobApplication,
+  deleteJobApplication,
+  type CreateJobApplicationData,
+  type UpdateJobApplicationData,
+} from '../../redux/actions/jobApplications/jobApplications';
 
 interface JobApplicationsMainProps {
   applications: JobApplication[];
@@ -49,6 +54,7 @@ const JobApplicationsMain = ({
   isLoading,
   error,
 }: JobApplicationsMainProps) => {
+  const dispatch = useAppDispatch();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedApplication, setSelectedApplication] =
     useState<JobApplication | null>(null);
@@ -73,25 +79,34 @@ const JobApplicationsMain = ({
     }
   };
 
-  const handleCreate = (data: {
-    companyName: string;
-    position: string;
-    status: JobApplicationStatus;
-    dateApplied: string;
-  }) => {
-    console.log('Create new application:', data);
-    // TODO: Implement create functionality (dispatch Redux action)
+  const handleCreate = async (data: CreateJobApplicationData) => {
+    try {
+      await dispatch(createJobApplication(data)).unwrap();
+      setCreateModalOpen(false);
+    } catch (error) {
+      console.error('Failed to create job application:', error);
+    }
   };
 
-  const handleEditSave = (id: number, data: Partial<JobApplication>) => {
-    console.log('Save edited application:', id, data);
-    // TODO: Implement save functionality (dispatch Redux action)
+  const handleEditSave = async (id: number, data: UpdateJobApplicationData) => {
+    try {
+      await dispatch(updateJobApplication({ id, data })).unwrap();
+      setEditModalOpen(false);
+      setSelectedApplication(null);
+    } catch (error) {
+      console.error('Failed to update job application:', error);
+    }
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (applicationToDelete) {
-      console.log('Delete application:', applicationToDelete.id);
-      // TODO: Implement delete functionality (dispatch Redux action)
+      try {
+        await dispatch(deleteJobApplication(applicationToDelete.id)).unwrap();
+        setDeleteDialogOpen(false);
+        setApplicationToDelete(null);
+      } catch (error) {
+        console.error('Failed to delete job application:', error);
+      }
     }
   };
 

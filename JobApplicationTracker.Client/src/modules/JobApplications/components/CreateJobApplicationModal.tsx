@@ -19,16 +19,13 @@ import { useState, useEffect } from 'react';
 
 import type { JobApplicationStatus } from '../../../redux/types/jobApplications';
 import { JobApplicationStatusValues } from '../../../redux/types/jobApplications';
+import type { CreateJobApplicationData } from '../../../redux/actions/jobApplications/jobApplications';
+import { getStatusDisplayName } from '../utils/statusUtils';
 
 interface CreateJobApplicationModalProps {
   open: boolean;
   onClose: () => void;
-  onCreate: (data: {
-    companyName: string;
-    position: string;
-    status: JobApplicationStatus;
-    dateApplied: string;
-  }) => void;
+  onCreate: (data: CreateJobApplicationData) => void;
 }
 
 const CreateJobApplicationModal = ({
@@ -113,7 +110,7 @@ const CreateJobApplicationModal = ({
           >
             {statusOptions.map((status) => (
               <MenuItem key={status} value={status}>
-                {status}
+                {getStatusDisplayName(status)}
               </MenuItem>
             ))}
           </TextField>

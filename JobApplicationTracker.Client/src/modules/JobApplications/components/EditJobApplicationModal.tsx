@@ -22,12 +22,14 @@ import type {
     JobApplicationStatus,
 } from '../../../redux/types/jobApplications';
 import { JobApplicationStatusValues } from '../../../redux/types/jobApplications';
+import type { UpdateJobApplicationData } from '../../../redux/actions/jobApplications/jobApplications';
+import { getStatusDisplayName } from '../utils/statusUtils';
 
 interface EditJobApplicationModalProps {
     open: boolean;
     application: JobApplication | null;
     onClose: () => void;
-    onSave: (id: number, data: Partial<JobApplication>) => void;
+    onSave: (id: number, data: UpdateJobApplicationData) => Promise<void>;
 }
 
 const EditJobApplicationModal = ({
@@ -63,13 +65,12 @@ const EditJobApplicationModal = ({
         }));
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (application) {
-            onSave(application.id, {
+            await onSave(application.id, {
                 ...formData,
                 dateApplied: new Date(formData.dateApplied).toISOString(),
             });
-            onClose();
         }
     };
 
@@ -114,7 +115,7 @@ const EditJobApplicationModal = ({
                     >
                         {statusOptions.map((status) => (
                             <MenuItem key={status} value={status}>
-                                {status}
+                                {getStatusDisplayName(status)}
                             </MenuItem>
                         ))}
                     </TextField>
