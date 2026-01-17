@@ -80,22 +80,14 @@ const JobApplicationsMain = ({
   };
 
   const handleCreate = async (data: CreateJobApplicationData) => {
-    try {
-      await dispatch(createJobApplication(data)).unwrap();
-      setCreateModalOpen(false);
-    } catch (error) {
-      console.error('Failed to create job application:', error);
-    }
+    await dispatch(createJobApplication(data)).unwrap();
+    setCreateModalOpen(false);
   };
 
   const handleEditSave = async (id: number, data: UpdateJobApplicationData) => {
-    try {
-      await dispatch(updateJobApplication({ id, data })).unwrap();
-      setEditModalOpen(false);
-      setSelectedApplication(null);
-    } catch (error) {
-      console.error('Failed to update job application:', error);
-    }
+    await dispatch(updateJobApplication({ id, data })).unwrap();
+    setEditModalOpen(false);
+    setSelectedApplication(null);
   };
 
   const handleDeleteConfirm = async () => {
