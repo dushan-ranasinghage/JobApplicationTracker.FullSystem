@@ -15,7 +15,7 @@ import preferencesReducer from './preferences/preferences';
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['jobApplications'], // Don't persist jobApplications, but persist preferences
+  blacklist: ['jobApplications'], // No need to persist jobApplications
 };
 
 const appReducer = combineReducers({

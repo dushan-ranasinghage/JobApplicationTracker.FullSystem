@@ -31,9 +31,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
         <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
           Job Application Tracker
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {/* Add user menu or other navbar items here */}
-        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }} />
       </Toolbar>
     </AppBar>
   );
