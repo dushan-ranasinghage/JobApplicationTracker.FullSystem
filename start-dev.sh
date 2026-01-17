@@ -100,10 +100,10 @@ trap cleanup INT TERM
 
 echo -e "${BLUE}Starting servers...${NC}\n"
 
-# Start the Web API
+# Start the Web API (using HTTP profile to avoid SSL certificate issues)
 echo -e "${GREEN}Starting Web API...${NC}"
 cd "$SCRIPT_DIR/JobApplicationTracker.WebApi"
-dotnet run --launch-profile https > /tmp/job-tracker-api.log 2>&1 &
+dotnet run --launch-profile http > /tmp/job-tracker-api.log 2>&1 &
 API_PID=$!
 
 # Wait a bit for the API to start
@@ -116,7 +116,7 @@ if ! kill -0 $API_PID 2>/dev/null; then
 fi
 
 echo -e "${GREEN}Web API started (PID: $API_PID)${NC}"
-echo -e "${BLUE}API running at: https://localhost:7223${NC}\n"
+echo -e "${BLUE}API running at: http://localhost:5069${NC}\n"
 
 # Start the React Client
 echo -e "${GREEN}Starting React Client...${NC}"

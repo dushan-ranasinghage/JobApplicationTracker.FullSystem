@@ -8,8 +8,13 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
+// Use HTTP in development to avoid SSL certificate issues
+// Set VITE_API_BASE_URL environment variable to override
 const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || 'https://localhost:7223/api';
+    import.meta.env.VITE_API_BASE_URL || 
+    (import.meta.env.DEV 
+        ? 'http://localhost:5069/api' 
+        : 'https://localhost:7223/api');
 
 class JobApplicationTrackerClientClass {
     private client: AxiosInstance;

@@ -1,1 +1,18 @@
 .DS_Store
+
+# Build artifacts
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+**/bin/
+**/obj/
+**/[Dd]ebug/
+**/bin/Debug/
+**/[Rr]elease/
+**/node_modules/
+**/dist/
+**/dist-ssr/
+*.db
+*.db-shm
+*.db-wal
