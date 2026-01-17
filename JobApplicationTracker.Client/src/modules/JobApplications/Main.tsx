@@ -5,73 +5,129 @@
  * @copyright Copyright 2026 - JobApplicationTracker.Client All Rights Reserved.
  */
 
-import { useSelector } from 'react-redux';
-
 import {
-  selectAllJobApplications,
-  selectIsJobApplicationsLoading,
-  selectJobApplicationsError,
-} from '../../redux/selectors/jobApplications';
-import type { JobApplication } from '../../redux/types/jobApplications';
+  Container,
+  Typography,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Chip,
+} from '@mui/material';
 
-const JobApplicationsMain = () => {
-  const applications = useSelector(selectAllJobApplications);
-  const isLoading = useSelector(selectIsJobApplicationsLoading);
-  const error = useSelector(selectJobApplicationsError);
+import type { JobApplication } from '../../redux/types/jobApplications';
+import Loading from '../../components/Loading';
+import Error from '../../components/Error';
+
+interface JobApplicationsMainProps {
+  applications: JobApplication[];
+  isLoading: boolean;
+  error: string | null;
+}
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'Applied':
+      return 'default';
+    case 'Interview':
+      return 'info';
+    case 'Offer':
+      return 'success';
+    case 'Accepted':
+      return 'success';
+    case 'Rejected':
+      return 'error';
+    default:
+      return 'default';
+  }
+};
+
+const JobApplicationsMain = ({
+  applications,
+  isLoading,
+  error,
+}: JobApplicationsMainProps) => {
+  if (isLoading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Job Application Tracker
+        </Typography>
+        <Loading />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Job Application Tracker
+        </Typography>
+        <Error message={error} />
+      </Container>
+    );
+  }
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Job Application Tracker</h1>
-      
-      {isLoading && <p>Loading job applications...</p>}
-      
-      {error && (
-        <div style={{ color: 'red', marginBottom: '20px' }}>
-          <strong>Error:</strong> {error}
-        </div>
-      )}
-      
-      {!isLoading && !error && (
-        <>
-          <h2>Job Applications ({applications.length})</h2>
-          {applications.length === 0 ? (
-            <p>No job applications found.</p>
-          ) : (
-            <div style={{ display: 'grid', gap: '16px' }}>
-              {applications.map((app: JobApplication) => (
-                <div
-                  key={app.id}
-                  style={{
-                    border: '1px solid #ddd',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    backgroundColor: '#f9f9f9',
-                  }}
-                >
-                  <h3 style={{ margin: '0 0 8px 0' }}>
-                    {app.position} at {app.companyName}
-                  </h3>
-                  <p style={{ margin: '4px 0', color: '#666' }}>
-                    <strong>Status:</strong> {app.status}
-                  </p>
-                  <p style={{ margin: '4px 0', color: '#666' }}>
-                    <strong>Applied:</strong> {new Date(app.dateApplied).toLocaleDateString()}
-                  </p>
-                  {app.updatedAt && (
-                    <p style={{ margin: '4px 0', color: '#666' }}>
-                      <strong>Last Updated:</strong> {new Date(app.updatedAt).toLocaleDateString()}
-                    </p>
-                  )}
-                  <p style={{ margin: '4px 0', color: '#999', fontSize: '12px' }}>
-                    Created: {new Date(app.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Job Application Tracker
+      </Typography>
+      <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 3 }}>
+        Job Applications ({applications.length})
+      </Typography>
+      {applications.length === 0 ? (
+        <Box sx={{ py: 4 }}>
+          <Typography variant="body1">No job applications found.</Typography>
+        </Box>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Company</TableCell>
+                <TableCell>Position</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Date Applied</TableCell>
+                <TableCell>Last Updated</TableCell>
+                <TableCell>Created</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {applications.map((app) => (
+                <TableRow key={app.id} hover>
+                  <TableCell>{app.companyName}</TableCell>
+                  <TableCell>{app.position}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={app.status}
+                      color={getStatusColor(app.status) as 'default' | 'info' | 'success' | 'error'}
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    {new Date(app.dateApplied).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {app.updatedAt
+                      ? new Date(app.updatedAt).toLocaleDateString()
+                      : '-'}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(app.createdAt).toLocaleDateString()}
+                  </TableCell>
+                </TableRow>
               ))}
-            </div>
-          )}
-        </>
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
-    </div>
+    </Container>
   );
 };
 

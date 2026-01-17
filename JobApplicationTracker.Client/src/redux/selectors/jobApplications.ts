@@ -41,7 +41,7 @@ export const selectJobApplicationById = createSelector(
 
 export const selectIsJobApplicationsLoading = createSelector(
   [selectJobApplicationsStatus],
-  (status) => status === 'loading'
+  (status) => status === 'loading' || status === 'idle'
 );
 
 export const selectHasJobApplicationsError = createSelector(
