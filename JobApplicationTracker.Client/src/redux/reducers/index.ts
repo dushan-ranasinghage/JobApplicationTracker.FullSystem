@@ -10,15 +10,17 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import jobApplicationsReducer from './jobApplications/jobApplications';
+import preferencesReducer from './preferences/preferences';
 
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['jobApplications'], // Don't persist jobApplications
+  blacklist: ['jobApplications'], // Don't persist jobApplications, but persist preferences
 };
 
 const appReducer = combineReducers({
   jobApplications: jobApplicationsReducer,
+  preferences: preferencesReducer,
 });
 
 export type RootState = ReturnType<typeof appReducer>;

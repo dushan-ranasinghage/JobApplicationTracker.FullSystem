@@ -5,22 +5,26 @@
  * @copyright Copyright 2026 - JobApplicationTracker.Client All Rights Reserved.
  */
 
-import { useState } from 'react';
 import { Box } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+import { useAppDispatch } from '../redux/store';
+import { selectSidebarOpen } from '../redux/selectors/preferences';
+import { setSidebarOpen } from '../redux/reducers/preferences/preferences';
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 const MainLayout = ({ children }: MainLayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const dispatch = useAppDispatch();
+  const sidebarOpen = useSelector(selectSidebarOpen);
   const drawerWidth = 240;
 
   const handleSidebarToggle = () => {
-    setSidebarOpen(!sidebarOpen);
+    dispatch(setSidebarOpen(!sidebarOpen));
   };
 
   return (

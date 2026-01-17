@@ -17,8 +17,9 @@ import {
   selectJobApplicationsError,
   selectJobApplicationsPagination,
 } from '../../redux/selectors/jobApplications';
+import { selectPageSize } from '../../redux/selectors/preferences';
+import { setPageSize } from '../../redux/reducers/preferences/preferences';
 
-const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_PAGE_NUMBER = 1;
 
 const JobApplicationsModuleLoader = () => {
@@ -27,9 +28,9 @@ const JobApplicationsModuleLoader = () => {
   const isLoading = useSelector(selectIsJobApplicationsLoading);
   const error = useSelector(selectJobApplicationsError);
   const pagination = useSelector(selectJobApplicationsPagination);
+  const pageSize = useSelector(selectPageSize);
 
   const [pageNumber, setPageNumber] = useState(DEFAULT_PAGE_NUMBER);
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   useEffect(() => {
     dispatch(fetchAllJobApplications({ pageNumber, pageSize }));
@@ -47,7 +48,7 @@ const JobApplicationsModuleLoader = () => {
   };
 
   const handlePageSizeChange = (newPageSize: number) => {
-    setPageSize(newPageSize);
+    dispatch(setPageSize(newPageSize));
     setPageNumber(1); // Reset to first page when page size changes
   };
 
