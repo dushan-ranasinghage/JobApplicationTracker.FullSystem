@@ -17,12 +17,26 @@ import {
   TableRow,
   Paper,
   Chip,
+  IconButton,
+  Tooltip,
+  Button,
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-import type { JobApplication } from '../../redux/types/jobApplications';
+import { useState } from 'react';
+
+import type {
+  JobApplication,
+  JobApplicationStatus,
+} from '../../redux/types/jobApplications';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import { getStatusColor, getStatusDisplayName } from './utils/statusUtils';
+import EditJobApplicationModal from './components/EditJobApplicationModal';
+import DeleteConfirmationDialog from './components/DeleteConfirmationDialog';
+import CreateJobApplicationModal from './components/CreateJobApplicationModal';
 
 interface JobApplicationsMainProps {
   applications: JobApplication[];
@@ -35,12 +49,65 @@ const JobApplicationsMain = ({
   isLoading,
   error,
 }: JobApplicationsMainProps) => {
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedApplication, setSelectedApplication] =
+    useState<JobApplication | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [applicationToDelete, setApplicationToDelete] =
+    useState<JobApplication | null>(null);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+
+  const handleEdit = (id: number) => {
+    const application = applications.find((app) => app.id === id);
+    if (application) {
+      setSelectedApplication(application);
+      setEditModalOpen(true);
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    const application = applications.find((app) => app.id === id);
+    if (application) {
+      setApplicationToDelete(application);
+      setDeleteDialogOpen(true);
+    }
+  };
+
+  const handleCreate = (data: {
+    companyName: string;
+    position: string;
+    status: JobApplicationStatus;
+    dateApplied: string;
+  }) => {
+    console.log('Create new application:', data);
+    // TODO: Implement create functionality (dispatch Redux action)
+  };
+
+  const handleEditSave = (id: number, data: Partial<JobApplication>) => {
+    console.log('Save edited application:', id, data);
+    // TODO: Implement save functionality (dispatch Redux action)
+  };
+
+  const handleDeleteConfirm = () => {
+    if (applicationToDelete) {
+      console.log('Delete application:', applicationToDelete.id);
+      // TODO: Implement delete functionality (dispatch Redux action)
+    }
+  };
+
+  const handleEditModalClose = () => {
+    setEditModalOpen(false);
+    setSelectedApplication(null);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setDeleteDialogOpen(false);
+    setApplicationToDelete(null);
+  };
+
   if (isLoading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Job Application Tracker
-        </Typography>
         <Loading />
       </Container>
     );
@@ -49,9 +116,6 @@ const JobApplicationsMain = ({
   if (error) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Job Application Tracker
-        </Typography>
         <Error message={error} />
       </Container>
     );
@@ -59,9 +123,26 @@ const JobApplicationsMain = ({
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h6" component="h2" gutterBottom sx={{ mb: 3 }}>
-        No of Job Applications ({applications.length})
-      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
+      >
+        <Typography variant="h6" component="h2">
+          No of Job Applications ({applications.length})
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={() => setCreateModalOpen(true)}
+        >
+          Add Job Application
+        </Button>
+      </Box>
       {applications.length === 0 ? (
         <Box sx={{ py: 4 }}>
           <Typography variant="body1">No job applications found.</Typography>
@@ -75,6 +156,7 @@ const JobApplicationsMain = ({
                 <TableCell>Position</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Date Applied</TableCell>
+                <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -87,10 +169,10 @@ const JobApplicationsMain = ({
                       label={getStatusDisplayName(app.status)}
                       color={
                         getStatusColor(app.status) as
-                          | 'default'
-                          | 'info'
-                          | 'success'
-                          | 'error'
+                        | 'default'
+                        | 'info'
+                        | 'success'
+                        | 'error'
                       }
                       size="small"
                     />
@@ -98,12 +180,53 @@ const JobApplicationsMain = ({
                   <TableCell>
                     {new Date(app.dateApplied).toLocaleString()}
                   </TableCell>
+                  <TableCell align="right">
+                    <Tooltip title="Edit">
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEdit(app.id)}
+                        color="primary"
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                      <IconButton
+                        size="small"
+                        onClick={() => handleDelete(app.id)}
+                        color="error"
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       )}
+      <EditJobApplicationModal
+        open={editModalOpen}
+        application={selectedApplication}
+        onClose={handleEditModalClose}
+        onSave={handleEditSave}
+      />
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        applicationName={
+          applicationToDelete
+            ? `${applicationToDelete.position} at ${applicationToDelete.companyName}`
+            : ''
+        }
+        onClose={handleDeleteDialogClose}
+        onConfirm={handleDeleteConfirm}
+      />
+      <CreateJobApplicationModal
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onCreate={handleCreate}
+      />
     </Container>
   );
 };

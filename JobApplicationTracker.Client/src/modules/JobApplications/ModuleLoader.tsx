@@ -25,6 +25,13 @@ const JobApplicationsModuleLoader = () => {
 
   useEffect(() => {
     dispatch(fetchAllJobApplications());
+
+    // Every minute, fetch the latest job applications
+    const intervalId = setInterval(() => {
+      dispatch(fetchAllJobApplications());
+    }, 60000);
+
+    return () => clearInterval(intervalId);
   }, [dispatch]);
 
   return (
