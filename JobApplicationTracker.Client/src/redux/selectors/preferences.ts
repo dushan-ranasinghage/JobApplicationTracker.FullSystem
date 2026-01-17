@@ -20,3 +20,8 @@ export const selectSidebarOpen = createSelector(
     [selectPreferencesState],
     (preferencesState) => preferencesState.sidebarOpen
 );
+
+export const selectCurrentPage = createSelector(
+    [selectPreferencesState],
+    (preferencesState) => preferencesState.currentPage
+);

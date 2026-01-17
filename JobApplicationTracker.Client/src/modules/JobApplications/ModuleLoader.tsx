@@ -5,7 +5,7 @@
  * @copyright Copyright 2026 - JobApplicationTracker.Client All Rights Reserved.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import JobApplicationsMain from './Main';
@@ -17,10 +17,8 @@ import {
   selectJobApplicationsError,
   selectJobApplicationsPagination,
 } from '../../redux/selectors/jobApplications';
-import { selectPageSize } from '../../redux/selectors/preferences';
-import { setPageSize } from '../../redux/reducers/preferences/preferences';
-
-const DEFAULT_PAGE_NUMBER = 1;
+import { selectPageSize, selectCurrentPage } from '../../redux/selectors/preferences';
+import { setPageSize, setCurrentPage } from '../../redux/reducers/preferences/preferences';
 
 const JobApplicationsModuleLoader = () => {
   const dispatch = useAppDispatch();
@@ -29,8 +27,7 @@ const JobApplicationsModuleLoader = () => {
   const error = useSelector(selectJobApplicationsError);
   const pagination = useSelector(selectJobApplicationsPagination);
   const pageSize = useSelector(selectPageSize);
-
-  const [pageNumber, setPageNumber] = useState(DEFAULT_PAGE_NUMBER);
+  const pageNumber = useSelector(selectCurrentPage);
 
   useEffect(() => {
     dispatch(fetchAllJobApplications({ pageNumber, pageSize }));
@@ -44,12 +41,12 @@ const JobApplicationsModuleLoader = () => {
   }, [dispatch, pageNumber, pageSize]);
 
   const handlePageChange = (newPageNumber: number) => {
-    setPageNumber(newPageNumber);
+    dispatch(setCurrentPage(newPageNumber));
   };
 
   const handlePageSizeChange = (newPageSize: number) => {
     dispatch(setPageSize(newPageSize));
-    setPageNumber(1); // Reset to first page when page size changes
+    dispatch(setCurrentPage(1)); // Reset to first page when page size changes
   };
 
   return (

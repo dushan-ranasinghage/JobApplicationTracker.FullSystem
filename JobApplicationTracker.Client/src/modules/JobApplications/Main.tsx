@@ -311,7 +311,7 @@ const JobApplicationsMain = ({
           </Table>
         </TableContainer>
       )}
-      {pagination && pagination.totalPages > 0 && (
+      {pagination && (
         <Box
           sx={{
             display: 'flex',
@@ -334,14 +334,16 @@ const JobApplicationsMain = ({
               <MenuItem value={50}>50</MenuItem>
             </Select>
           </FormControl>
-          <Pagination
-            count={pagination.totalPages}
-            page={pagination.pageNumber}
-            onChange={(_, page) => onPageChange(page)}
-            color="primary"
-            showFirstButton
-            showLastButton
-          />
+          {pagination.totalPages > 0 && (
+            <Pagination
+              count={pagination.totalPages}
+              page={pagination.pageNumber}
+              onChange={(_, page) => onPageChange(page)}
+              color="primary"
+              showFirstButton
+              showLastButton
+            />
+          )}
           <Typography variant="body2" sx={{ minWidth: 150, textAlign: 'right' }}>
             Showing {applications.length > 0 ? (pagination.pageNumber - 1) * pagination.pageSize + 1 : 0} -{' '}
             {Math.min(pagination.pageNumber * pagination.pageSize, pagination.totalCount)} of{' '}

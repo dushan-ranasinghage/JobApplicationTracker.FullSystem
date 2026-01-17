@@ -8,4 +8,5 @@
 export interface PreferencesState {
     pageSize: number;
     sidebarOpen: boolean;
+    currentPage: number;
 }

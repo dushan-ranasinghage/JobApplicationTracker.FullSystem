@@ -62,19 +62,49 @@ async function fetchJobApplicationsData(
     url
   );
 
+  // Handle cases where response.data might be undefined or have different structure
+  if (!response || !response.data) {
+    console.error('Invalid response from server:', response);
+    throw new Error('Invalid response from server');
+  }
+
+  const responseData = response.data;
+  
+  // Handle both nested data structure (response.data.data) and flat structure (response.data)
+  // Check if data exists, if not, it might be an empty response or different structure
+  let dataArray: JobApplication[] = [];
+  
+  if (Array.isArray(responseData.data)) {
+    // Standard structure: { data: [...], pageNumber, pageSize, etc. }
+    dataArray = responseData.data;
+  } else if (Array.isArray(responseData)) {
+    // Response is directly an array
+    dataArray = responseData as unknown as JobApplication[];
+  } else if (!responseData.data) {
+    // No data property - might be empty or different structure
+    console.warn('Response data structure is invalid. Expected data property:', responseData);
+    dataArray = [];
+  }
+
   // Convert status from number to string if needed
-  const applications = response.data.data.map((app) => ({
+  const applications = dataArray.map((app) => ({
     ...app,
     status: getStatusString(app.status as number | string),
   }));
 
+  // Calculate totalCount from data array if not provided by API
+  // Use response pageSize if available, otherwise use the requested pageSize, otherwise default to 5
+  const responsePageSize = responseData.pageSize ?? pageSize ?? 5;
+  const totalCount = responseData.totalCount ?? dataArray.length;
+  const totalPages = responseData.totalPages ?? Math.ceil(totalCount / responsePageSize);
+
   return {
     applications,
     pagination: {
-      pageNumber: response.data.pageNumber,
-      pageSize: response.data.pageSize,
-      totalCount: response.data.totalCount,
-      totalPages: response.data.totalPages,
+      pageNumber: responseData.pageNumber ?? 1,
+      pageSize: responsePageSize,
+      totalCount: totalCount,
+      totalPages: totalPages,
     },
   };
 }
