@@ -1,15 +1,12 @@
 /**
- * @file JobApplications.tsx
- * @description Job Applications module component
+ * @file JobApplicationsMain.tsx
+ * @description Job Applications main component
  * @author Dushan Ranasinghage
  * @copyright Copyright 2026 - JobApplicationTracker.Client All Rights Reserved.
  */
 
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import { useAppDispatch } from '../../redux/store';
-import { fetchAllJobApplications } from '../../redux/actions/jobApplications/jobApplications';
 import {
   selectAllJobApplications,
   selectIsJobApplicationsLoading,
@@ -17,15 +14,10 @@ import {
 } from '../../redux/selectors/jobApplications';
 import type { JobApplication } from '../../redux/types/jobApplications';
 
-const JobApplications = () => {
-  const dispatch = useAppDispatch();
+const JobApplicationsMain = () => {
   const applications = useSelector(selectAllJobApplications);
   const isLoading = useSelector(selectIsJobApplicationsLoading);
   const error = useSelector(selectJobApplicationsError);
-
-  useEffect(() => {
-    dispatch(fetchAllJobApplications());
-  }, [dispatch]);
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
@@ -83,4 +75,4 @@ const JobApplications = () => {
   );
 };
 
-export default JobApplications;
+export default JobApplicationsMain;
