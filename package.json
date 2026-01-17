@@ -1,0 +1,23 @@
+{
+  "name": "job-application-tracker",
+  "version": "1.0.0",
+  "description": "Job Application Tracker - Full Stack Application",
+  "private": true,
+  "scripts": {
+    "setup": "npm run setup:client && npm run setup:api && npm run setup:db",
+    "setup:client": "cd JobApplicationTracker.Client && npm install",
+    "setup:api": "cd JobApplicationTracker.WebApi && dotnet restore",
+    "setup:db": "cd JobApplicationTracker.WebApi && dotnet ef database update || echo Database setup skipped - will be created on first run",
+    "predev": "npm run setup",
+    "dev": "concurrently \"npm:dev:api\" \"npm:dev:client\"",
+    "dev:api": "cd JobApplicationTracker.WebApi && dotnet run --launch-profile https",
+    "dev:client": "cd JobApplicationTracker.Client && npm run dev",
+    "install:all": "npm run setup",
+    "build": "npm run build:api && npm run build:client",
+    "build:api": "cd JobApplicationTracker.WebApi && dotnet build",
+    "build:client": "cd JobApplicationTracker.Client && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
