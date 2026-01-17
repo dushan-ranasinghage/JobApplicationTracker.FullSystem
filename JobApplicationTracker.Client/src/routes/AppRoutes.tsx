@@ -5,19 +5,31 @@
  * @copyright Copyright 2026 - JobApplicationTracker.Client All Rights Reserved.
  */
 
-import { Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-import JobApplicationsModuleLoader from '../modules/JobApplications/ModuleLoader';
+const JobApplicationsModuleLoader = lazy(() => import('../modules/JobApplications/ModuleLoader'));
 
 const AppRoutes = () => {
   return (
-    <Suspense fallback={<div>Loading module...</div>}>
-      <Routes>
-        <Route path="/" element={<JobApplicationsModuleLoader />} />
-        <Route path="/job-applications" element={<JobApplicationsModuleLoader />} />
-      </Routes>
-    </Suspense>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <Suspense fallback={<div>Loading module...</div>}>
+            <JobApplicationsModuleLoader />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/job-applications"
+        element={
+          <Suspense fallback={<div>Loading module...</div>}>
+            <JobApplicationsModuleLoader />
+          </Suspense>
+        }
+      />
+    </Routes>
   );
 };
 

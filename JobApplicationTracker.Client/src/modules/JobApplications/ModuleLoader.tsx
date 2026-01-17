@@ -6,12 +6,10 @@
  */
 
 import { useEffect } from 'react';
-import { lazy } from 'react';
 
+import  JobApplicationsMain from './Main';
 import { useAppDispatch } from '../../redux/store';
 import { fetchAllJobApplications } from '../../redux/actions/jobApplications/jobApplications';
-
-const JobApplicationsMain = lazy(() => import('./Main'));
 
 const JobApplicationsModuleLoader = () => {
   const dispatch = useAppDispatch();
