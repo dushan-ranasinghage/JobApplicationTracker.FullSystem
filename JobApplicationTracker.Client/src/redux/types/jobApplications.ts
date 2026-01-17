@@ -10,7 +10,7 @@ export interface JobApplication {
   companyName: string;
   position: string;
   status: JobApplicationStatus;
-  dateApplied: string; 
+  dateApplied: string;
   createdAt: string;
   updatedAt: string | null;
 }

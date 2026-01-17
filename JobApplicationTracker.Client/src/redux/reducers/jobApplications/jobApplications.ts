@@ -39,7 +39,8 @@ export const jobApplicationsSlice = createSlice({
       })
       .addCase(fetchAllJobApplications.rejected, (state, action) => {
         state.status = 'error';
-        state.error = action.payload as string || 'Failed to fetch job applications';
+        state.error =
+          (action.payload as string) || 'Failed to fetch job applications';
       });
   },
 });

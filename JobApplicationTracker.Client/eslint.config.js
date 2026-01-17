@@ -28,6 +28,9 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      // Disable indentation rules - Prettier handles formatting
+      '@typescript-eslint/indent': 'off',
+      'indent': 'off',
     },
   },
 )

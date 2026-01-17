@@ -12,28 +12,28 @@ import JobApplicationsMain from './Main';
 import { useAppDispatch } from '../../redux/store';
 import { fetchAllJobApplications } from '../../redux/actions/jobApplications/jobApplications';
 import {
-    selectAllJobApplications,
-    selectIsJobApplicationsLoading,
-    selectJobApplicationsError,
+  selectAllJobApplications,
+  selectIsJobApplicationsLoading,
+  selectJobApplicationsError,
 } from '../../redux/selectors/jobApplications';
 
 const JobApplicationsModuleLoader = () => {
-    const dispatch = useAppDispatch();
-    const applications = useSelector(selectAllJobApplications);
-    const isLoading = useSelector(selectIsJobApplicationsLoading);
-    const error = useSelector(selectJobApplicationsError);
+  const dispatch = useAppDispatch();
+  const applications = useSelector(selectAllJobApplications);
+  const isLoading = useSelector(selectIsJobApplicationsLoading);
+  const error = useSelector(selectJobApplicationsError);
 
-    useEffect(() => {
-        dispatch(fetchAllJobApplications());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchAllJobApplications());
+  }, [dispatch]);
 
-    return (
-        <JobApplicationsMain
-            applications={applications}
-            isLoading={isLoading}
-            error={error}
-        />
-    );
+  return (
+    <JobApplicationsMain
+      applications={applications}
+      isLoading={isLoading}
+      error={error}
+    />
+  );
 };
 
 export default JobApplicationsModuleLoader;

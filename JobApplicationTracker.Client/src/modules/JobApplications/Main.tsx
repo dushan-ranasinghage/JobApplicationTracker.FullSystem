@@ -22,29 +22,13 @@ import {
 import type { JobApplication } from '../../redux/types/jobApplications';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
+import { getStatusColor, getStatusDisplayName } from './utils/statusUtils';
 
 interface JobApplicationsMainProps {
   applications: JobApplication[];
   isLoading: boolean;
   error: string | null;
 }
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'Applied':
-      return 'default';
-    case 'Interview':
-      return 'info';
-    case 'Offer':
-      return 'success';
-    case 'Accepted':
-      return 'success';
-    case 'Rejected':
-      return 'error';
-    default:
-      return 'default';
-  }
-};
 
 const JobApplicationsMain = ({
   applications,
@@ -75,11 +59,8 @@ const JobApplicationsMain = ({
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Job Application Tracker
-      </Typography>
-      <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 3 }}>
-        Job Applications ({applications.length})
+      <Typography variant="h6" component="h2" gutterBottom sx={{ mb: 3 }}>
+        No of Job Applications ({applications.length})
       </Typography>
       {applications.length === 0 ? (
         <Box sx={{ py: 4 }}>
@@ -90,12 +71,10 @@ const JobApplicationsMain = ({
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Company</TableCell>
+                <TableCell>Company Name</TableCell>
                 <TableCell>Position</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Date Applied</TableCell>
-                <TableCell>Last Updated</TableCell>
-                <TableCell>Created</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -105,21 +84,19 @@ const JobApplicationsMain = ({
                   <TableCell>{app.position}</TableCell>
                   <TableCell>
                     <Chip
-                      label={app.status}
-                      color={getStatusColor(app.status) as 'default' | 'info' | 'success' | 'error'}
+                      label={getStatusDisplayName(app.status)}
+                      color={
+                        getStatusColor(app.status) as
+                          | 'default'
+                          | 'info'
+                          | 'success'
+                          | 'error'
+                      }
                       size="small"
                     />
                   </TableCell>
                   <TableCell>
-                    {new Date(app.dateApplied).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    {app.updatedAt
-                      ? new Date(app.updatedAt).toLocaleDateString()
-                      : '-'}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(app.createdAt).toLocaleDateString()}
+                    {new Date(app.dateApplied).toLocaleString()}
                   </TableCell>
                 </TableRow>
               ))}

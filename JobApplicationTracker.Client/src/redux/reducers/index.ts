@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @description 
+ * @description
  * @author Dushan Ranasinghage
  * @copyright Copyright 2026 - JobApplicationTracker.Client All Rights Reserved.
  */
@@ -18,16 +18,18 @@ const persistConfig = {
 };
 
 const appReducer = combineReducers({
-  jobApplications: jobApplicationsReducer
+  jobApplications: jobApplicationsReducer,
 });
 
 export type RootState = ReturnType<typeof appReducer>;
 
-const rootReducer = (state: RootState | undefined, action: { type: string }) => {
+const rootReducer = (
+  state: RootState | undefined,
+  action: { type: string }
+) => {
   return appReducer(state, action);
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export default persistedReducer;
-

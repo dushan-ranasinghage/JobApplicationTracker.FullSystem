@@ -6,27 +6,27 @@
  */
 
 import { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
-const JobApplicationsModuleLoader = lazy(() => import('../modules/JobApplications/ModuleLoader'));
+import MainLayout from '../layouts/MainLayout';
+import Loading from '../components/Loading';
+
+const JobApplicationsModuleLoader = lazy(
+  () => import('../modules/JobApplications/ModuleLoader')
+);
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <Suspense fallback={<div>Loading module...</div>}>
-            <JobApplicationsModuleLoader />
-          </Suspense>
-        }
-      />
+      <Route path="/" element={<Navigate to="/job-applications" replace />} />
       <Route
         path="/job-applications"
         element={
-          <Suspense fallback={<div>Loading module...</div>}>
-            <JobApplicationsModuleLoader />
-          </Suspense>
+          <MainLayout>
+            <Suspense fallback={<Loading />}>
+              <JobApplicationsModuleLoader />
+            </Suspense>
+          </MainLayout>
         }
       />
     </Routes>

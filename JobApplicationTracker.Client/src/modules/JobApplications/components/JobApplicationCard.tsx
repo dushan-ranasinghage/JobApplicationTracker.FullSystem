@@ -27,13 +27,15 @@ const JobApplicationCard = ({ application }: JobApplicationCardProps) => {
         </Box>
         <Box sx={{ mb: 1 }}>
           <Typography variant="body2" color="text.secondary">
-            <strong>Applied:</strong> {new Date(application.dateApplied).toLocaleDateString()}
+            <strong>Applied:</strong>{' '}
+            {new Date(application.dateApplied).toLocaleDateString()}
           </Typography>
         </Box>
         {application.updatedAt && (
           <Box sx={{ mb: 1 }}>
             <Typography variant="body2" color="text.secondary">
-              <strong>Last Updated:</strong> {new Date(application.updatedAt).toLocaleDateString()}
+              <strong>Last Updated:</strong>{' '}
+              {new Date(application.updatedAt).toLocaleDateString()}
             </Typography>
           </Box>
         )}

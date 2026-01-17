@@ -9,7 +9,13 @@ import { Box, CircularProgress, Typography } from '@mui/material';
 
 const Loading = () => {
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" gap={2} py={4}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      gap={2}
+      py={4}
+    >
       <CircularProgress />
       <Typography variant="body1">Loading job applications...</Typography>
     </Box>
