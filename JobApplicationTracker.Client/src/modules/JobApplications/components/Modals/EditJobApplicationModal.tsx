@@ -22,11 +22,11 @@ import { useEffect } from 'react';
 import type {
     JobApplication,
     JobApplicationStatus,
-} from '../../../redux/types/jobApplications';
-import { JobApplicationStatusValues } from '../../../redux/types/jobApplications';
-import type { UpdateJobApplicationData } from '../../../redux/actions/jobApplications/jobApplications';
-import { getStatusDisplayName } from '../utils/statusUtils';
-import { useJobApplicationForm } from '../hooks/useJobApplicationForm';
+} from '../../../../redux/types/jobApplications';
+import { JobApplicationStatusValues } from '../../../../redux/types/jobApplications';
+import type { UpdateJobApplicationData } from '../../../../redux/actions/jobApplications/jobApplications';
+import { getStatusDisplayName } from '../../utils/statusUtils';
+import { useJobApplicationForm } from '../../hooks/useJobApplicationForm';
 
 interface EditJobApplicationModalProps {
     open: boolean;

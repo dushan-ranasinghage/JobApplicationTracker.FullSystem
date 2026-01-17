@@ -5,41 +5,18 @@
  * @copyright Copyright 2026 - JobApplicationTracker.Client All Rights Reserved.
  */
 
-import {
-  Container,
-  Typography,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Tooltip,
-  Button,
-  Pagination,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import moment from 'moment-timezone';
-
+import { Container } from '@mui/material';
 import { useState } from 'react';
 
 import type { JobApplication, PaginationMetadata, JobApplicationStatus } from '../../redux/types/jobApplications';
-import { JobApplicationStatusValues } from '../../redux/types/jobApplications';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
-import { getStatusColor, getStatusDisplayName } from './utils/statusUtils';
-import EditJobApplicationModal from './components/EditJobApplicationModal';
-import DeleteConfirmationDialog from './components/DeleteConfirmationDialog';
-import CreateJobApplicationModal from './components/CreateJobApplicationModal';
+import EditJobApplicationModal from './components/Modals/EditJobApplicationModal';
+import DeleteConfirmationDialog from './components/Modals/DeleteConfirmationDialog';
+import CreateJobApplicationModal from './components/Modals/CreateJobApplicationModal';
+import JobApplicationsHeader from './components/JobApplicationsHeader';
+import JobApplicationsTable from './components/Table/JobApplicationsTable';
+import JobApplicationsPagination from './components/Table/JobApplicationsPagination';
 import { useAppDispatch } from '../../redux/store';
 import {
   createJobApplication,
@@ -94,14 +71,12 @@ const JobApplicationsMain = ({
   const handleCreate = async (data: CreateJobApplicationData) => {
     await dispatch(createJobApplication(data)).unwrap();
     setCreateModalOpen(false);
-    // onRefetch();
   };
 
   const handleEditSave = async (id: number, data: UpdateJobApplicationData) => {
     await dispatch(updateJobApplication({ id, data })).unwrap();
     setEditModalOpen(false);
     setSelectedApplication(null);
-    // onRefetch();
   };
 
   const handleStatusChange = async (id: number, newStatus: JobApplicationStatus) => {
@@ -126,7 +101,6 @@ const JobApplicationsMain = ({
         await dispatch(deleteJobApplication(applicationToDelete.id)).unwrap();
         setDeleteDialogOpen(false);
         setApplicationToDelete(null);
-        // onRefetch();
       } catch (error) {
         console.error('Failed to delete job application:', error);
       }
@@ -161,195 +135,23 @@ const JobApplicationsMain = ({
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 3,
-        }}
-      >
-        <Typography variant="h6" component="h2">
-          No of Job Applications ({pagination?.totalCount ?? applications.length})
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={() => setCreateModalOpen(true)}
-        >
-          Add Job Application
-        </Button>
-      </Box>
-      {applications.length === 0 ? (
-        <Box sx={{ py: 4 }}>
-          <Typography variant="body1">No job applications found.</Typography>
-        </Box>
-      ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Company Name</TableCell>
-                <TableCell>Position</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Date Applied</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {applications.map((app) => (
-                <TableRow key={app.id} hover>
-                  <TableCell>{app.companyName}</TableCell>
-                  <TableCell>{app.position}</TableCell>
-                  <TableCell>
-                    <Select
-                      value={app.status}
-                      onChange={(e) =>
-                        handleStatusChange(app.id, e.target.value as JobApplicationStatus)
-                      }
-                      size="small"
-                      sx={{
-                        minWidth: 160,
-                        height: 28,
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          border: 'none',
-                        },
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                          border: 'none',
-                        },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          border: 'none',
-                        },
-                        '& .MuiSelect-select': {
-                          py: 0.5,
-                          px: 1.5,
-                          backgroundColor: (theme) => {
-                            const color = getStatusColor(app.status);
-                            if (color === 'success') return theme.palette.success.main;
-                            if (color === 'info') return theme.palette.info.main;
-                            if (color === 'error') return theme.palette.error.main;
-                            return theme.palette.grey[300];
-                          },
-                          color: (theme) => {
-                            const color = getStatusColor(app.status);
-                            if (color === 'success' || color === 'info' || color === 'error') {
-                              return theme.palette.common.white;
-                            }
-                            return theme.palette.text.primary;
-                          },
-                          borderRadius: 1.5,
-                          fontWeight: 500,
-                          fontSize: '0.8125rem',
-                          display: 'flex',
-                          alignItems: 'center',
-                          '&:focus': {
-                            backgroundColor: (theme) => {
-                              const color = getStatusColor(app.status);
-                              if (color === 'success') return theme.palette.success.main;
-                              if (color === 'info') return theme.palette.info.main;
-                              if (color === 'error') return theme.palette.error.main;
-                              return theme.palette.grey[300];
-                            },
-                          },
-                        },
-                        '& .MuiSelect-icon': {
-                          color: (theme) => {
-                            const color = getStatusColor(app.status);
-                            if (color === 'success' || color === 'info' || color === 'error') {
-                              return theme.palette.common.white;
-                            }
-                            return theme.palette.text.primary;
-                          },
-                          fontSize: '1.2rem',
-                        },
-                      }}
-                    >
-                      <MenuItem value={JobApplicationStatusValues.APPLIED}>
-                        {getStatusDisplayName(JobApplicationStatusValues.APPLIED)}
-                      </MenuItem>
-                      <MenuItem value={JobApplicationStatusValues.INTERVIEW}>
-                        {getStatusDisplayName(JobApplicationStatusValues.INTERVIEW)}
-                      </MenuItem>
-                      <MenuItem value={JobApplicationStatusValues.OFFER}>
-                        {getStatusDisplayName(JobApplicationStatusValues.OFFER)}
-                      </MenuItem>
-                      <MenuItem value={JobApplicationStatusValues.ACCEPTED}>
-                        {getStatusDisplayName(JobApplicationStatusValues.ACCEPTED)}
-                      </MenuItem>
-                      <MenuItem value={JobApplicationStatusValues.REJECTED}>
-                        {getStatusDisplayName(JobApplicationStatusValues.REJECTED)}
-                      </MenuItem>
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    {moment.utc(app.dateApplied).tz('Pacific/Auckland').format('DD/MM/YYYY, HH:mm')}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Tooltip title="Edit">
-                      <IconButton
-                        size="small"
-                        onClick={() => handleEdit(app.id)}
-                        color="primary"
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Delete">
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDelete(app.id)}
-                        color="error"
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      <JobApplicationsHeader
+        totalCount={pagination?.totalCount ?? applications.length}
+        onAddClick={() => setCreateModalOpen(true)}
+      />
+      <JobApplicationsTable
+        applications={applications}
+        onStatusChange={handleStatusChange}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
       {pagination && (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mt: 3,
-            gap: 2,
-          }}
-        >
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel>Page Size</InputLabel>
-            <Select
-              value={pagination.pageSize}
-              label="Page Size"
-              onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            >
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-            </Select>
-          </FormControl>
-          {pagination.totalPages > 0 && (
-            <Pagination
-              count={pagination.totalPages}
-              page={pagination.pageNumber}
-              onChange={(_, page) => onPageChange(page)}
-              color="primary"
-              showFirstButton
-              showLastButton
-            />
-          )}
-          <Typography variant="body2" sx={{ minWidth: 150, textAlign: 'right' }}>
-            Showing {applications.length > 0 ? (pagination.pageNumber - 1) * pagination.pageSize + 1 : 0} -{' '}
-            {Math.min(pagination.pageNumber * pagination.pageSize, pagination.totalCount)} of{' '}
-            {pagination.totalCount}
-          </Typography>
-        </Box>
+        <JobApplicationsPagination
+          pagination={pagination}
+          applicationsCount={applications.length}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+        />
       )}
       <EditJobApplicationModal
         open={editModalOpen}

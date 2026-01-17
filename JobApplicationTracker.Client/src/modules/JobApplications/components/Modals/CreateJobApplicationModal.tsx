@@ -19,11 +19,11 @@ import {
 } from '@mui/material';
 import { useEffect } from 'react';
 
-import type { JobApplicationStatus } from '../../../redux/types/jobApplications';
-import { JobApplicationStatusValues } from '../../../redux/types/jobApplications';
-import type { CreateJobApplicationData } from '../../../redux/actions/jobApplications/jobApplications';
-import { getStatusDisplayName } from '../utils/statusUtils';
-import { useJobApplicationForm } from '../hooks/useJobApplicationForm';
+import type { JobApplicationStatus } from '../../../../redux/types/jobApplications';
+import { JobApplicationStatusValues } from '../../../../redux/types/jobApplications';
+import type { CreateJobApplicationData } from '../../../../redux/actions/jobApplications/jobApplications';
+import { getStatusDisplayName } from '../../utils/statusUtils';
+import { useJobApplicationForm } from '../../hooks/useJobApplicationForm';
 
 interface CreateJobApplicationModalProps {
   open: boolean;
