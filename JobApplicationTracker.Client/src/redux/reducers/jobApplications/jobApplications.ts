@@ -61,7 +61,7 @@ export const jobApplicationsSlice = createSlice({
         state.error = null;
       })
       .addCase(createJobApplication.fulfilled, (state, action) => {
-        state.applications.push(action.payload);
+        state.applications.unshift(action.payload);
         state.error = null;
       })
       .addCase(createJobApplication.rejected, (state, action) => {
