@@ -19,6 +19,7 @@ const INITIAL_STATE: JobApplicationsState = {
   applications: [],
   status: 'idle',
   error: null,
+  pagination: null,
 };
 
 export const jobApplicationsSlice = createSlice({
@@ -40,7 +41,8 @@ export const jobApplicationsSlice = createSlice({
       })
       .addCase(fetchAllJobApplications.fulfilled, (state, action) => {
         state.status = 'finished';
-        state.applications = action.payload;
+        state.applications = action.payload.applications;
+        state.pagination = action.payload.pagination;
         state.error = null;
       })
       .addCase(fetchAllJobApplications.rejected, (state, action) => {

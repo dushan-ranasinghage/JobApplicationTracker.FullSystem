@@ -20,6 +20,11 @@ import {
   IconButton,
   Tooltip,
   Button,
+  Pagination,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -27,7 +32,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useState } from 'react';
 
-import type { JobApplication } from '../../redux/types/jobApplications';
+import type { JobApplication, PaginationMetadata } from '../../redux/types/jobApplications';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import { getStatusColor, getStatusDisplayName } from './utils/statusUtils';
@@ -47,12 +52,20 @@ interface JobApplicationsMainProps {
   applications: JobApplication[];
   isLoading: boolean;
   error: string | null;
+  pagination: PaginationMetadata | null;
+  onPageChange: (pageNumber: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
+  onRefetch: () => void;
 }
 
 const JobApplicationsMain = ({
   applications,
   isLoading,
   error,
+  pagination,
+  onPageChange,
+  onPageSizeChange,
+  onRefetch,
 }: JobApplicationsMainProps) => {
   const dispatch = useAppDispatch();
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -82,12 +95,14 @@ const JobApplicationsMain = ({
   const handleCreate = async (data: CreateJobApplicationData) => {
     await dispatch(createJobApplication(data)).unwrap();
     setCreateModalOpen(false);
+    onRefetch();
   };
 
   const handleEditSave = async (id: number, data: UpdateJobApplicationData) => {
     await dispatch(updateJobApplication({ id, data })).unwrap();
     setEditModalOpen(false);
     setSelectedApplication(null);
+    onRefetch();
   };
 
   const handleDeleteConfirm = async () => {
@@ -96,6 +111,7 @@ const JobApplicationsMain = ({
         await dispatch(deleteJobApplication(applicationToDelete.id)).unwrap();
         setDeleteDialogOpen(false);
         setApplicationToDelete(null);
+        onRefetch();
       } catch (error) {
         console.error('Failed to delete job application:', error);
       }
@@ -129,7 +145,7 @@ const JobApplicationsMain = ({
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
       <Box
         sx={{
           display: 'flex',
@@ -139,7 +155,7 @@ const JobApplicationsMain = ({
         }}
       >
         <Typography variant="h6" component="h2">
-          No of Job Applications ({applications.length})
+          No of Job Applications ({pagination?.totalCount ?? applications.length})
         </Typography>
         <Button
           variant="contained"
@@ -212,6 +228,44 @@ const JobApplicationsMain = ({
             </TableBody>
           </Table>
         </TableContainer>
+      )}
+      {pagination && pagination.totalPages > 0 && (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mt: 3,
+            gap: 2,
+          }}
+        >
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <InputLabel>Page Size</InputLabel>
+            <Select
+              value={pagination.pageSize}
+              label="Page Size"
+              onChange={(e) => onPageSizeChange(Number(e.target.value))}
+            >
+              <MenuItem value={5}>5</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={20}>20</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+            </Select>
+          </FormControl>
+          <Pagination
+            count={pagination.totalPages}
+            page={pagination.pageNumber}
+            onChange={(_, page) => onPageChange(page)}
+            color="primary"
+            showFirstButton
+            showLastButton
+          />
+          <Typography variant="body2" sx={{ minWidth: 150, textAlign: 'right' }}>
+            Showing {applications.length > 0 ? (pagination.pageNumber - 1) * pagination.pageSize + 1 : 0} -{' '}
+            {Math.min(pagination.pageNumber * pagination.pageSize, pagination.totalCount)} of{' '}
+            {pagination.totalCount}
+          </Typography>
+        </Box>
       )}
       <EditJobApplicationModal
         open={editModalOpen}

@@ -9,7 +9,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 import { JobApplicationTrackerClient } from '../../../clients/JobApplicationTrackerClient';
-import type { JobApplication, JobApplicationStatus } from '../../types/jobApplications';
+import type { JobApplication, JobApplicationStatus, PaginatedJobApplicationsResponse } from '../../types/jobApplications';
 import { getStatusNumber, getStatusString } from '../../../modules/JobApplications/utils/statusUtils';
 
 export interface CreateJobApplicationData {
@@ -41,19 +41,47 @@ interface UpdateJobApplicationPayload {
   dateApplied: string;
 }
 
+export interface FetchJobApplicationsParams {
+  pageNumber?: number;
+  pageSize?: number;
+}
+
 export const fetchAllJobApplications = createAsyncThunk(
   'jobApplications/fetchAll',
-  async (_, { rejectWithValue }) => {
+  async (params: FetchJobApplicationsParams = {}, { rejectWithValue }) => {
     try {
-      const response = await JobApplicationTrackerClient.get<JobApplication[]>(
-        '/job-applications'
+      const { pageNumber, pageSize } = params;
+      const queryParams = new URLSearchParams();
+      
+      if (pageNumber !== undefined) {
+        queryParams.append('pageNumber', pageNumber.toString());
+      }
+      if (pageSize !== undefined) {
+        queryParams.append('pageSize', pageSize.toString());
+      }
+      
+      const queryString = queryParams.toString();
+      const url = queryString ? `/job-applications?${queryString}` : '/job-applications';
+      
+      const response = await JobApplicationTrackerClient.get<PaginatedJobApplicationsResponse>(
+        url
       );
+      
       // Convert status from number to string if needed
-      const applications = response.data.map((app) => ({
+      const applications = response.data.data.map((app) => ({
         ...app,
         status: getStatusString(app.status as number | string),
       }));
-      return applications;
+      
+      return {
+        applications,
+        pagination: {
+          pageNumber: response.data.pageNumber,
+          pageSize: response.data.pageSize,
+          totalCount: response.data.totalCount,
+          totalPages: response.data.totalPages,
+        },
+      };
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const errorMessage =

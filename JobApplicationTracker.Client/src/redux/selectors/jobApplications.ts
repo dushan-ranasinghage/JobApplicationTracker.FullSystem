@@ -11,6 +11,7 @@ import type { RootState } from '../store';
 import type {
   JobApplication,
   JobApplicationStatus,
+  PaginationMetadata,
 } from '../types/jobApplications';
 
 const selectJobApplicationsState = (state: RootState) => state.jobApplications;
@@ -51,4 +52,9 @@ export const selectIsJobApplicationsLoading = createSelector(
 export const selectHasJobApplicationsError = createSelector(
   [selectJobApplicationsError],
   (error) => error !== null
+);
+
+export const selectJobApplicationsPagination = createSelector(
+  [selectJobApplicationsState],
+  (jobApplicationsState): PaginationMetadata | null => jobApplicationsState.pagination
 );

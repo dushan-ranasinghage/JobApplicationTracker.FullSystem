@@ -38,8 +38,24 @@ export const JobApplicationStatusEnum = {
   Accepted: 5,
 } as const;
 
+export interface PaginationMetadata {
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+export interface PaginatedJobApplicationsResponse {
+  data: JobApplication[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
 export interface JobApplicationsState {
   applications: JobApplication[];
   status: 'idle' | 'loading' | 'finished' | 'error';
   error: string | null;
+  pagination: PaginationMetadata | null;
 }
