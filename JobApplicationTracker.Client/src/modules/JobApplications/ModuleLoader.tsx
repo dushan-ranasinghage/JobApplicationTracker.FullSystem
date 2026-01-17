@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 
 import JobApplicationsMain from './Main';
 import { useAppDispatch } from '../../redux/store';
-import { fetchAllJobApplications } from '../../redux/actions/jobApplications/jobApplications';
+import { fetchAllJobApplications, refreshJobApplications } from '../../redux/actions/jobApplications/jobApplications';
 import {
   selectAllJobApplications,
   selectIsJobApplicationsLoading,
@@ -27,16 +27,16 @@ const JobApplicationsModuleLoader = () => {
   const isLoading = useSelector(selectIsJobApplicationsLoading);
   const error = useSelector(selectJobApplicationsError);
   const pagination = useSelector(selectJobApplicationsPagination);
-  
+
   const [pageNumber, setPageNumber] = useState(DEFAULT_PAGE_NUMBER);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   useEffect(() => {
     dispatch(fetchAllJobApplications({ pageNumber, pageSize }));
 
-    // Every minute, fetch the latest job applications
+    // Every minute, refresh the latest job applications
     const intervalId = setInterval(() => {
-      dispatch(fetchAllJobApplications({ pageNumber, pageSize }));
+      dispatch(refreshJobApplications({ pageNumber, pageSize }));
     }, 60000);
 
     return () => clearInterval(intervalId);
@@ -51,10 +51,6 @@ const JobApplicationsModuleLoader = () => {
     setPageNumber(1); // Reset to first page when page size changes
   };
 
-  const handleRefetch = () => {
-    dispatch(fetchAllJobApplications({ pageNumber, pageSize }));
-  };
-
   return (
     <JobApplicationsMain
       applications={applications}
@@ -63,7 +59,6 @@ const JobApplicationsModuleLoader = () => {
       pagination={pagination}
       onPageChange={handlePageChange}
       onPageSizeChange={handlePageSizeChange}
-      onRefetch={handleRefetch}
     />
   );
 };

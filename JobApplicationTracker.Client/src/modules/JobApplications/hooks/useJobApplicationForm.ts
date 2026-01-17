@@ -10,18 +10,17 @@ import { useState, useCallback } from 'react';
 import type { JobApplicationStatus } from '../../../redux/types/jobApplications';
 import {
     validateField,
-    validateForm,
-    type JobApplicationFormData,
 } from '../utils/validationUtils';
 
-export interface JobApplicationFormState extends JobApplicationFormData {
+export interface JobApplicationFormState {
+    companyName: string;
+    position: string;
     status: JobApplicationStatus;
 }
 
 export interface FormErrors {
     companyName?: string;
     position?: string;
-    dateApplied?: string;
     submit?: string;
 }
 
@@ -40,9 +39,6 @@ export const useJobApplicationForm = ({
         companyName: initialData?.companyName || '',
         position: initialData?.position || '',
         status: initialData?.status || 'Applied',
-        dateApplied:
-            initialData?.dateApplied ||
-            new Date().toISOString().split('T')[0],
     });
 
     const [errors, setErrors] = useState<FormErrors>({});
@@ -66,9 +62,9 @@ export const useJobApplicationForm = ({
             }
 
             // Validate field on blur or after change if already touched
-            if (touched[field]) {
+            if (touched[field] && (field === 'companyName' || field === 'position')) {
                 const error = validateField(
-                    field as keyof JobApplicationFormData,
+                    field as 'companyName' | 'position',
                     value as string
                 );
                 if (error) {
@@ -80,7 +76,7 @@ export const useJobApplicationForm = ({
     );
 
     const handleBlur = useCallback(
-        (field: keyof JobApplicationFormData) => () => {
+        (field: 'companyName' | 'position') => () => {
             setTouched((prev) => ({ ...prev, [field]: true }));
             const error = validateField(field, formData[field] as string);
             if (error) {
@@ -95,15 +91,20 @@ export const useJobApplicationForm = ({
         setTouched({
             companyName: true,
             position: true,
-            dateApplied: true,
         });
 
-        // Validate all fields
-        const validationErrors = validateForm({
-            companyName: formData.companyName,
-            position: formData.position,
-            dateApplied: formData.dateApplied,
-        });
+        // Validate fields
+        const validationErrors: FormErrors = {};
+
+        const companyNameError = validateField('companyName', formData.companyName);
+        if (companyNameError) {
+            validationErrors.companyName = companyNameError;
+        }
+
+        const positionError = validateField('position', formData.position);
+        if (positionError) {
+            validationErrors.position = positionError;
+        }
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
@@ -114,14 +115,13 @@ export const useJobApplicationForm = ({
         setErrors((prev) => ({ ...prev, submit: undefined }));
 
         try {
-            await Promise.resolve(
-                onSubmit({
-                    ...formData,
-                    companyName: formData.companyName.trim(),
-                    position: formData.position.trim(),
-                    dateApplied: new Date(formData.dateApplied).toISOString(),
-                })
-            );
+            const submitData: JobApplicationFormState = {
+                companyName: formData.companyName.trim(),
+                position: formData.position.trim(),
+                status: formData.status,
+            };
+
+            await Promise.resolve(onSubmit(submitData));
             onSuccess?.();
         } catch (error) {
             const errorMessage =
@@ -139,8 +139,6 @@ export const useJobApplicationForm = ({
             companyName: newData?.companyName || '',
             position: newData?.position || '',
             status: newData?.status || 'Applied',
-            dateApplied:
-                newData?.dateApplied || new Date().toISOString().split('T')[0],
         });
         setErrors({});
         setTouched({});

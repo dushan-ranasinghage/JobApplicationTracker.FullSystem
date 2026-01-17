@@ -16,14 +16,12 @@ export interface CreateJobApplicationData {
   companyName: string;
   position: string;
   status: JobApplicationStatus;
-  dateApplied: string;
 }
 
 export interface UpdateJobApplicationData {
   companyName: string;
   position: string;
   status: JobApplicationStatus;
-  dateApplied: string;
 }
 
 // Payload types for API (status as number)
@@ -31,14 +29,12 @@ interface CreateJobApplicationPayload {
   companyName: string;
   position: string;
   status: number;
-  dateApplied: string;
 }
 
 interface UpdateJobApplicationPayload {
   companyName: string;
   position: string;
   status: number;
-  dateApplied: string;
 }
 
 export interface FetchJobApplicationsParams {
@@ -46,42 +42,48 @@ export interface FetchJobApplicationsParams {
   pageSize?: number;
 }
 
+async function fetchJobApplicationsData(
+  params: FetchJobApplicationsParams = {}
+) {
+  const { pageNumber, pageSize } = params;
+  const queryParams = new URLSearchParams();
+
+  if (pageNumber !== undefined) {
+    queryParams.append('pageNumber', pageNumber.toString());
+  }
+  if (pageSize !== undefined) {
+    queryParams.append('pageSize', pageSize.toString());
+  }
+
+  const queryString = queryParams.toString();
+  const url = queryString ? `/job-applications?${queryString}` : '/job-applications';
+
+  const response = await JobApplicationTrackerClient.get<PaginatedJobApplicationsResponse>(
+    url
+  );
+
+  // Convert status from number to string if needed
+  const applications = response.data.data.map((app) => ({
+    ...app,
+    status: getStatusString(app.status as number | string),
+  }));
+
+  return {
+    applications,
+    pagination: {
+      pageNumber: response.data.pageNumber,
+      pageSize: response.data.pageSize,
+      totalCount: response.data.totalCount,
+      totalPages: response.data.totalPages,
+    },
+  };
+}
+
 export const fetchAllJobApplications = createAsyncThunk(
   'jobApplications/fetchAll',
   async (params: FetchJobApplicationsParams = {}, { rejectWithValue }) => {
     try {
-      const { pageNumber, pageSize } = params;
-      const queryParams = new URLSearchParams();
-      
-      if (pageNumber !== undefined) {
-        queryParams.append('pageNumber', pageNumber.toString());
-      }
-      if (pageSize !== undefined) {
-        queryParams.append('pageSize', pageSize.toString());
-      }
-      
-      const queryString = queryParams.toString();
-      const url = queryString ? `/job-applications?${queryString}` : '/job-applications';
-      
-      const response = await JobApplicationTrackerClient.get<PaginatedJobApplicationsResponse>(
-        url
-      );
-      
-      // Convert status from number to string if needed
-      const applications = response.data.data.map((app) => ({
-        ...app,
-        status: getStatusString(app.status as number | string),
-      }));
-      
-      return {
-        applications,
-        pagination: {
-          pageNumber: response.data.pageNumber,
-          pageSize: response.data.pageSize,
-          totalCount: response.data.totalCount,
-          totalPages: response.data.totalPages,
-        },
-      };
+      return await fetchJobApplicationsData(params);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const errorMessage =
@@ -101,6 +103,30 @@ export const fetchAllJobApplications = createAsyncThunk(
   }
 );
 
+export const refreshJobApplications = createAsyncThunk(
+  'jobApplications/refresh',
+  async (params: FetchJobApplicationsParams = {}, { rejectWithValue }) => {
+    try {
+      return await fetchJobApplicationsData(params);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
+          'Failed to refresh job applications';
+        console.error('Error refreshing job applications:', errorMessage);
+        return rejectWithValue(errorMessage);
+      }
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to refresh job applications';
+      console.error('Error refreshing job applications:', error);
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
 export const createJobApplication = createAsyncThunk(
   'jobApplications/create',
   async (data: CreateJobApplicationData, { rejectWithValue }) => {
@@ -110,7 +136,6 @@ export const createJobApplication = createAsyncThunk(
         companyName: data.companyName,
         position: data.position,
         status: getStatusNumber(data.status),
-        dateApplied: data.dateApplied,
       };
       const response = await JobApplicationTrackerClient.post<JobApplication>(
         '/job-applications',
@@ -152,7 +177,6 @@ export const updateJobApplication = createAsyncThunk(
         companyName: data.companyName,
         position: data.position,
         status: getStatusNumber(data.status),
-        dateApplied: data.dateApplied,
       };
       const response = await JobApplicationTrackerClient.put<JobApplication>(
         `/job-applications/${id}`,
@@ -160,7 +184,6 @@ export const updateJobApplication = createAsyncThunk(
       );
 
       // Handle 204 No Content or empty response
-      // Check if response.data is null, undefined, or empty object
       const hasNoContent =
         !response.data ||
         (typeof response.data === 'object' &&
@@ -168,7 +191,6 @@ export const updateJobApplication = createAsyncThunk(
           Object.keys(response.data).length === 0);
 
       if (hasNoContent) {
-        // Return the original data with id (status is already a string in data)
         return {
           ...data,
           id,

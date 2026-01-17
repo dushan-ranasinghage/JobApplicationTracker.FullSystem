@@ -16,7 +16,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Chip,
   IconButton,
   Tooltip,
   Button,
@@ -29,10 +28,12 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import moment from 'moment-timezone';
 
 import { useState } from 'react';
 
-import type { JobApplication, PaginationMetadata } from '../../redux/types/jobApplications';
+import type { JobApplication, PaginationMetadata, JobApplicationStatus } from '../../redux/types/jobApplications';
+import { JobApplicationStatusValues } from '../../redux/types/jobApplications';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import { getStatusColor, getStatusDisplayName } from './utils/statusUtils';
@@ -55,7 +56,6 @@ interface JobApplicationsMainProps {
   pagination: PaginationMetadata | null;
   onPageChange: (pageNumber: number) => void;
   onPageSizeChange: (pageSize: number) => void;
-  onRefetch: () => void;
 }
 
 const JobApplicationsMain = ({
@@ -64,8 +64,7 @@ const JobApplicationsMain = ({
   error,
   pagination,
   onPageChange,
-  onPageSizeChange,
-  onRefetch,
+  onPageSizeChange
 }: JobApplicationsMainProps) => {
   const dispatch = useAppDispatch();
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -95,14 +94,30 @@ const JobApplicationsMain = ({
   const handleCreate = async (data: CreateJobApplicationData) => {
     await dispatch(createJobApplication(data)).unwrap();
     setCreateModalOpen(false);
-    onRefetch();
+    // onRefetch();
   };
 
   const handleEditSave = async (id: number, data: UpdateJobApplicationData) => {
     await dispatch(updateJobApplication({ id, data })).unwrap();
     setEditModalOpen(false);
     setSelectedApplication(null);
-    onRefetch();
+    // onRefetch();
+  };
+
+  const handleStatusChange = async (id: number, newStatus: JobApplicationStatus) => {
+    const application = applications.find((app) => app.id === id);
+    if (application) {
+      const updateData: UpdateJobApplicationData = {
+        companyName: application.companyName,
+        position: application.position,
+        status: newStatus,
+      };
+      try {
+        await dispatch(updateJobApplication({ id, data: updateData })).unwrap();
+      } catch (error) {
+        console.error('Failed to update status:', error);
+      }
+    }
   };
 
   const handleDeleteConfirm = async () => {
@@ -111,7 +126,7 @@ const JobApplicationsMain = ({
         await dispatch(deleteJobApplication(applicationToDelete.id)).unwrap();
         setDeleteDialogOpen(false);
         setApplicationToDelete(null);
-        onRefetch();
+        // onRefetch();
       } catch (error) {
         console.error('Failed to delete job application:', error);
       }
@@ -188,20 +203,87 @@ const JobApplicationsMain = ({
                   <TableCell>{app.companyName}</TableCell>
                   <TableCell>{app.position}</TableCell>
                   <TableCell>
-                    <Chip
-                      label={getStatusDisplayName(app.status)}
-                      color={
-                        getStatusColor(app.status) as
-                        | 'default'
-                        | 'info'
-                        | 'success'
-                        | 'error'
+                    <Select
+                      value={app.status}
+                      onChange={(e) =>
+                        handleStatusChange(app.id, e.target.value as JobApplicationStatus)
                       }
                       size="small"
-                    />
+                      sx={{
+                        minWidth: 160,
+                        height: 28,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          border: 'none',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          border: 'none',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          border: 'none',
+                        },
+                        '& .MuiSelect-select': {
+                          py: 0.5,
+                          px: 1.5,
+                          backgroundColor: (theme) => {
+                            const color = getStatusColor(app.status);
+                            if (color === 'success') return theme.palette.success.main;
+                            if (color === 'info') return theme.palette.info.main;
+                            if (color === 'error') return theme.palette.error.main;
+                            return theme.palette.grey[300];
+                          },
+                          color: (theme) => {
+                            const color = getStatusColor(app.status);
+                            if (color === 'success' || color === 'info' || color === 'error') {
+                              return theme.palette.common.white;
+                            }
+                            return theme.palette.text.primary;
+                          },
+                          borderRadius: 1.5,
+                          fontWeight: 500,
+                          fontSize: '0.8125rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          '&:focus': {
+                            backgroundColor: (theme) => {
+                              const color = getStatusColor(app.status);
+                              if (color === 'success') return theme.palette.success.main;
+                              if (color === 'info') return theme.palette.info.main;
+                              if (color === 'error') return theme.palette.error.main;
+                              return theme.palette.grey[300];
+                            },
+                          },
+                        },
+                        '& .MuiSelect-icon': {
+                          color: (theme) => {
+                            const color = getStatusColor(app.status);
+                            if (color === 'success' || color === 'info' || color === 'error') {
+                              return theme.palette.common.white;
+                            }
+                            return theme.palette.text.primary;
+                          },
+                          fontSize: '1.2rem',
+                        },
+                      }}
+                    >
+                      <MenuItem value={JobApplicationStatusValues.APPLIED}>
+                        {getStatusDisplayName(JobApplicationStatusValues.APPLIED)}
+                      </MenuItem>
+                      <MenuItem value={JobApplicationStatusValues.INTERVIEW}>
+                        {getStatusDisplayName(JobApplicationStatusValues.INTERVIEW)}
+                      </MenuItem>
+                      <MenuItem value={JobApplicationStatusValues.OFFER}>
+                        {getStatusDisplayName(JobApplicationStatusValues.OFFER)}
+                      </MenuItem>
+                      <MenuItem value={JobApplicationStatusValues.ACCEPTED}>
+                        {getStatusDisplayName(JobApplicationStatusValues.ACCEPTED)}
+                      </MenuItem>
+                      <MenuItem value={JobApplicationStatusValues.REJECTED}>
+                        {getStatusDisplayName(JobApplicationStatusValues.REJECTED)}
+                      </MenuItem>
+                    </Select>
                   </TableCell>
                   <TableCell>
-                    {new Date(app.dateApplied).toLocaleString()}
+                    {moment.utc(app.dateApplied).tz('Pacific/Auckland').format('DD/MM/YYYY, HH:mm')}
                   </TableCell>
                   <TableCell align="right">
                     <Tooltip title="Edit">

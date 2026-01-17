@@ -126,21 +126,6 @@ const CreateJobApplicationModal = ({
               </MenuItem>
             ))}
           </TextField>
-          <TextField
-            label="Date Applied"
-            type="date"
-            value={formData.dateApplied}
-            onChange={handleChange('dateApplied')}
-            onBlur={handleBlur('dateApplied')}
-            fullWidth
-            required
-            error={!!errors.dateApplied}
-            helperText={errors.dateApplied}
-            disabled={isSubmitting}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
         </Box>
       </DialogContent>
       <DialogActions>

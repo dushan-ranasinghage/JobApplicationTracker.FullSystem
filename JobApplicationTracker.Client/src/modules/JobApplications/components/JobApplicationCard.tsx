@@ -6,6 +6,7 @@
  */
 
 import { Card, CardContent, Typography, Box } from '@mui/material';
+import moment from 'moment-timezone';
 
 import type { JobApplication } from '../../../redux/types/jobApplications';
 
@@ -28,19 +29,19 @@ const JobApplicationCard = ({ application }: JobApplicationCardProps) => {
         <Box sx={{ mb: 1 }}>
           <Typography variant="body2" color="text.secondary">
             <strong>Applied:</strong>{' '}
-            {new Date(application.dateApplied).toLocaleDateString()}
+            {moment.utc(application.dateApplied).tz('Pacific/Auckland').format('DD/MM/YYYY, HH:mm')}
           </Typography>
         </Box>
         {application.updatedAt && (
           <Box sx={{ mb: 1 }}>
             <Typography variant="body2" color="text.secondary">
               <strong>Last Updated:</strong>{' '}
-              {new Date(application.updatedAt).toLocaleDateString()}
+              {moment(application.updatedAt).format('DD/MM/YYYY')}
             </Typography>
           </Box>
         )}
         <Typography variant="caption" color="text.secondary">
-          Created: {new Date(application.createdAt).toLocaleDateString()}
+          Created: {moment(application.createdAt).format('DD/MM/YYYY')}
         </Typography>
       </CardContent>
     </Card>

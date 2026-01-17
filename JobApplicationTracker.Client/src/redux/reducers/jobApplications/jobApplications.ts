@@ -10,6 +10,7 @@ import { createSlice, current } from '@reduxjs/toolkit';
 import type { JobApplicationsState } from '../../types/jobApplications';
 import {
   fetchAllJobApplications,
+  refreshJobApplications,
   createJobApplication,
   updateJobApplication,
   deleteJobApplication,
@@ -49,6 +50,11 @@ export const jobApplicationsSlice = createSlice({
         state.status = 'error';
         state.error =
           (action.payload as string) || 'Failed to fetch job applications';
+      })
+      // Refresh silently
+      .addCase(refreshJobApplications.fulfilled, (state, action) => {
+        state.applications = action.payload.applications;
+        state.pagination = action.payload.pagination;
       })
       // Create
       .addCase(createJobApplication.pending, (state) => {
