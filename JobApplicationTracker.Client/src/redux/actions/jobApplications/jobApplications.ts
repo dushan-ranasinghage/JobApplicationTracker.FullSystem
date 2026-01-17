@@ -23,14 +23,14 @@ export const fetchAllJobApplications = createAsyncThunk(
       return response.data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message 
-          || error.message 
+        const errorMessage = error.response?.data?.message
+          || error.message
           || 'Failed to fetch job applications';
         console.error('Error fetching job applications:', errorMessage);
         return rejectWithValue(errorMessage);
       }
-      const errorMessage = error instanceof Error 
-        ? error.message 
+      const errorMessage = error instanceof Error
+        ? error.message
         : 'Failed to fetch job applications';
       console.error('Error fetching job applications:', error);
       return rejectWithValue(errorMessage);
