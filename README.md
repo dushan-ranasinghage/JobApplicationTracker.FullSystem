@@ -6,13 +6,24 @@ A full-stack application for tracking job applications, built with React (TypeSc
 
 ### Option 1: Automated Setup (Recommended)
 
-**Step 1:** Open a terminal/command prompt in the project root directory:
+**Step 1:** Get the project files:  
+- **Option A:** Download the ZIP from the repository and extract it to a folder.  
+- **Option B:** Clone the repository using Git:  
+```bash
+git clone https://github.com/dushan-ranasinghage/JobApplicationTracker.FullSystem.git
+```
+
+**Step 2:** Open a terminal/command prompt in the project root directory:
 ```
 JobApplicationTracker.FullSystem/
 ```
 
-**Step 2:** Run the shell script:
+**Step 3:** Run the shell script:
 ```bash
+# Linux / macOS (Terminal)
+./start-dev.sh
+
+# Windows (Git Bash or WSL)
 ./start-dev.sh
 ```
 
