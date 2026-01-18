@@ -135,6 +135,7 @@ npm run dev
 - **Error Handling** - Basic error handling in place. Backend errors logged, frontend shows console errors. Production would need better user feedback
 - **API Design** - RESTful API with standard HTTP methods. Swagger available in development mode
 - **Frontend** - Single Page Application (SPA) with client-side routing. No server-side rendering
+- **Generic Repositories** - Didn't use generic repositories as there is only one controller
 
 ## Notes
 
