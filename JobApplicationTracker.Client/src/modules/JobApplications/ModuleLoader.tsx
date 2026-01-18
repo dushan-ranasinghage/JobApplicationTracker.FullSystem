@@ -10,15 +10,24 @@ import { useSelector } from 'react-redux';
 
 import JobApplicationsMain from './Main';
 import { useAppDispatch } from '../../redux/store';
-import { fetchAllJobApplications, refreshJobApplications } from '../../redux/actions/jobApplications/jobApplications';
+import {
+  fetchAllJobApplications,
+  refreshJobApplications,
+} from '../../redux/actions/jobApplications/jobApplications';
 import {
   selectAllJobApplications,
   selectIsJobApplicationsLoading,
   selectJobApplicationsError,
   selectJobApplicationsPagination,
 } from '../../redux/selectors/jobApplications';
-import { selectPageSize, selectCurrentPage } from '../../redux/selectors/preferences';
-import { setPageSize, setCurrentPage } from '../../redux/reducers/preferences/preferences';
+import {
+  selectPageSize,
+  selectCurrentPage,
+} from '../../redux/selectors/preferences';
+import {
+  setPageSize,
+  setCurrentPage,
+} from '../../redux/reducers/preferences/preferences';
 
 const JobApplicationsModuleLoader = () => {
   const dispatch = useAppDispatch();

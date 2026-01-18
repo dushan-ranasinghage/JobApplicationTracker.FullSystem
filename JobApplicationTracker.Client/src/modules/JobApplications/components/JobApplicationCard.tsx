@@ -29,7 +29,10 @@ const JobApplicationCard = ({ application }: JobApplicationCardProps) => {
         <Box sx={{ mb: 1 }}>
           <Typography variant="body2" color="text.secondary">
             <strong>Applied:</strong>{' '}
-            {moment.utc(application.dateApplied).tz('Pacific/Auckland').format('DD/MM/YYYY, HH:mm')}
+            {moment
+              .utc(application.dateApplied)
+              .tz('Pacific/Auckland')
+              .format('DD/MM/YYYY, HH:mm')}
           </Typography>
         </Box>
         {application.updatedAt && (

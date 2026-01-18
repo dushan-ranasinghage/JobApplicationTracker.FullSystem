@@ -81,13 +81,13 @@ export const jobApplicationsSlice = createSlice({
         // Handle API returning no content (204) or empty response
         const payload = action.payload
           ? {
-            ...action.payload,
-            id: updateId,
-          }
+              ...action.payload,
+              id: updateId,
+            }
           : {
-            ...updateData,
-            id: updateId,
-          };
+              ...updateData,
+              id: updateId,
+            };
 
         // Find and update the application
         const index = applications.findIndex((app) => app.id === updateId);

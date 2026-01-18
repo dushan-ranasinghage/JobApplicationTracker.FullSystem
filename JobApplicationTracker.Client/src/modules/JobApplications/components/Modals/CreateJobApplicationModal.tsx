@@ -57,11 +57,10 @@ const CreateJobApplicationModal = ({
     }
   }, [open, reset]);
 
-  const handleChange = (field: string) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    updateField(field as keyof typeof formData, event.target.value);
-  };
+  const handleChange =
+    (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      updateField(field as keyof typeof formData, event.target.value);
+    };
 
   const handleClose = () => {
     reset();
@@ -82,10 +81,7 @@ const CreateJobApplicationModal = ({
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {errors.submit && (
-            <Alert
-              severity="error"
-              onClose={() => clearError('submit')}
-            >
+            <Alert severity="error" onClose={() => clearError('submit')}>
               {errors.submit}
             </Alert>
           )}

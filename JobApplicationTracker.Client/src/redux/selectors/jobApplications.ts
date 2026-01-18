@@ -56,5 +56,6 @@ export const selectHasJobApplicationsError = createSelector(
 
 export const selectJobApplicationsPagination = createSelector(
   [selectJobApplicationsState],
-  (jobApplicationsState): PaginationMetadata | null => jobApplicationsState.pagination
+  (jobApplicationsState): PaginationMetadata | null =>
+    jobApplicationsState.pagination
 );

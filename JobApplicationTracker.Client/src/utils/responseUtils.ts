@@ -36,7 +36,10 @@ export function extractDataArray<T = JobApplication>(
   }
 
   // Invalid structure
-  console.warn('Response data structure is invalid. Expected data property:', responseData);
+  console.warn(
+    'Response data structure is invalid. Expected data property:',
+    responseData
+  );
   return [];
 }
 
@@ -72,9 +75,11 @@ export function extractPaginationMetadata(
   dataLength: number = 0
 ) {
   const DEFAULT_PAGE_SIZE = 5;
-  const pageSize = responseData.pageSize ?? requestedPageSize ?? DEFAULT_PAGE_SIZE;
+  const pageSize =
+    responseData.pageSize ?? requestedPageSize ?? DEFAULT_PAGE_SIZE;
   const totalCount = responseData.totalCount ?? dataLength;
-  const totalPages = responseData.totalPages ?? Math.ceil(totalCount / pageSize);
+  const totalPages =
+    responseData.totalPages ?? Math.ceil(totalCount / pageSize);
 
   return {
     pageNumber: responseData.pageNumber ?? 1,

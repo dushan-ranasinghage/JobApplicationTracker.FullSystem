@@ -6,51 +6,51 @@
  */
 
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-    Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
 } from '@mui/material';
 
 interface DeleteConfirmationDialogProps {
-    open: boolean;
-    applicationName: string;
-    onClose: () => void;
-    onConfirm: () => void;
+  open: boolean;
+  applicationName: string;
+  onClose: () => void;
+  onConfirm: () => void;
 }
 
 const DeleteConfirmationDialog = ({
-    open,
-    applicationName,
-    onClose,
-    onConfirm,
+  open,
+  applicationName,
+  onClose,
+  onConfirm,
 }: DeleteConfirmationDialogProps) => {
-    const handleConfirm = () => {
-        onConfirm();
-        onClose();
-    };
+  const handleConfirm = () => {
+    onConfirm();
+    onClose();
+  };
 
-    return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Confirm Delete</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    Are you sure you want to delete the job application for{' '}
-                    <strong>{applicationName}</strong>? This action cannot be undone.
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} color="primary">
-                    Cancel
-                </Button>
-                <Button onClick={handleConfirm} color="error" variant="contained">
-                    Delete
-                </Button>
-            </DialogActions>
-        </Dialog>
-    );
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Confirm Delete</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Are you sure you want to delete the job application for{' '}
+          <strong>{applicationName}</strong>? This action cannot be undone.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleConfirm} color="error" variant="contained">
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 };
 
 export default DeleteConfirmationDialog;

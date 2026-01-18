@@ -64,9 +64,16 @@ const JobApplicationsPagination = ({
         />
       )}
       <Typography variant="body2" sx={{ minWidth: 150, textAlign: 'right' }}>
-        Showing {applicationsCount > 0 ? (pagination.pageNumber - 1) * pagination.pageSize + 1 : 0} -{' '}
-        {Math.min(pagination.pageNumber * pagination.pageSize, pagination.totalCount)} of{' '}
-        {pagination.totalCount}
+        Showing{' '}
+        {applicationsCount > 0
+          ? (pagination.pageNumber - 1) * pagination.pageSize + 1
+          : 0}{' '}
+        -{' '}
+        {Math.min(
+          pagination.pageNumber * pagination.pageSize,
+          pagination.totalCount
+        )}{' '}
+        of {pagination.totalCount}
       </Typography>
     </Box>
   );

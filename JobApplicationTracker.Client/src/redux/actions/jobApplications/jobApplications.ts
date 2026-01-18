@@ -9,10 +9,21 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 import { JobApplicationTrackerClient } from '../../../clients/JobApplicationTrackerClient';
-import type { JobApplication, JobApplicationStatus, PaginatedJobApplicationsResponse } from '../../types/jobApplications';
-import { getStatusNumber, getStatusString } from '../../../modules/JobApplications/utils/statusUtils';
+import type {
+  JobApplication,
+  JobApplicationStatus,
+  PaginatedJobApplicationsResponse,
+} from '../../types/jobApplications';
+import {
+  getStatusNumber,
+  getStatusString,
+} from '../../../modules/JobApplications/utils/statusUtils';
 import { buildUrlWithParams } from '../../../utils/apiUtils';
-import { extractDataArray, extractPaginationMetadata, normalizeJobApplications } from '../../../utils/responseUtils';
+import {
+  extractDataArray,
+  extractPaginationMetadata,
+  normalizeJobApplications,
+} from '../../../utils/responseUtils';
 
 export interface CreateJobApplicationData {
   companyName: string;
@@ -50,9 +61,10 @@ async function fetchJobApplicationsData(
   const { pageNumber, pageSize } = params;
   const url = buildUrlWithParams('/job-applications', { pageNumber, pageSize });
 
-  const response = await JobApplicationTrackerClient.get<PaginatedJobApplicationsResponse>(
-    url
-  );
+  const response =
+    await JobApplicationTrackerClient.get<PaginatedJobApplicationsResponse>(
+      url
+    );
 
   if (!response?.data) {
     console.error('Invalid response from server:', response);
@@ -62,7 +74,11 @@ async function fetchJobApplicationsData(
   const responseData = response.data;
   const dataArray = extractDataArray<JobApplication>(responseData);
   const applications = normalizeJobApplications(dataArray);
-  const pagination = extractPaginationMetadata(responseData, pageSize, dataArray.length);
+  const pagination = extractPaginationMetadata(
+    responseData,
+    pageSize,
+    dataArray.length
+  );
 
   return {
     applications,

@@ -9,259 +9,289 @@ import { configureStore } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 import {
-    fetchAllJobApplications,
-    refreshJobApplications,
-    createJobApplication,
-    updateJobApplication,
-    deleteJobApplication,
+  fetchAllJobApplications,
+  refreshJobApplications,
+  createJobApplication,
+  updateJobApplication,
+  deleteJobApplication,
 } from '../jobApplications';
 import jobApplicationsReducer from '../../../reducers/jobApplications/jobApplications';
 import { mockGet, mockPost, mockPut, mockDelete } from '../../../../testUtils';
 import type { TestStore } from '../../../../testUtils';
 
 describe('jobApplications actions test suite', () => {
-    let store: TestStore;
+  let store: TestStore;
 
-    beforeEach(() => {
-        store = configureStore({
-            reducer: {
-                jobApplications: jobApplicationsReducer,
+  beforeEach(() => {
+    store = configureStore({
+      reducer: {
+        jobApplications: jobApplicationsReducer,
+      },
+    });
+    jest.clearAllMocks();
+  });
+
+  describe('test fetchAllJobApplications action', () => {
+    it('should fetch job applications successfully', async () => {
+      const mockResponse = {
+        data: {
+          data: [
+            {
+              id: 1,
+              companyName: 'Company A',
+              position: 'Developer',
+              status: 1,
+              dateApplied: '2024-01-01',
+              createdAt: '2024-01-01',
+              updatedAt: null,
             },
-        });
-        jest.clearAllMocks();
+          ],
+          pageNumber: 1,
+          pageSize: 10,
+          totalCount: 1,
+          totalPages: 1,
+        },
+      };
+
+      mockGet.mockResolvedValue(mockResponse);
+
+      const result = await store.dispatch(
+        fetchAllJobApplications({ pageNumber: 1, pageSize: 10 })
+      );
+
+      expect(result.type).toBe('jobApplications/fetchAll/fulfilled');
+      const state = (store.getState() as any).jobApplications;
+      expect(state.status).toBe('finished');
+      expect(state.applications).toHaveLength(1);
+      expect(state.error).toBeNull();
     });
 
-    describe('test fetchAllJobApplications action', () => {
-        it('should fetch job applications successfully', async () => {
-            const mockResponse = {
-                data: {
-                    data: [
-                        { id: 1, companyName: 'Company A', position: 'Developer', status: 1, dateApplied: '2024-01-01', createdAt: '2024-01-01', updatedAt: null },
-                    ],
-                    pageNumber: 1,
-                    pageSize: 10,
-                    totalCount: 1,
-                    totalPages: 1,
-                },
-            };
+    it('should handle fetch error', async () => {
+      const mockError = {
+        response: { data: { message: 'Network error' } },
+        message: 'Network error',
+      };
 
-            mockGet.mockResolvedValue(mockResponse);
+      (axios.isAxiosError as any).mockReturnValue(true);
+      mockGet.mockRejectedValue(mockError);
 
-            const result = await store.dispatch(fetchAllJobApplications({ pageNumber: 1, pageSize: 10 }));
+      await store.dispatch(fetchAllJobApplications({}));
 
-            expect(result.type).toBe('jobApplications/fetchAll/fulfilled');
-            const state = (store.getState() as any).jobApplications;
-            expect(state.status).toBe('finished');
-            expect(state.applications).toHaveLength(1);
-            expect(state.error).toBeNull();
-        });
+      const state = (store.getState() as any).jobApplications;
+      expect(state.status).toBe('error');
+      expect(state.error).toBe('Network error');
+    });
+  });
 
-        it('should handle fetch error', async () => {
-            const mockError = {
-                response: { data: { message: 'Network error' } },
-                message: 'Network error',
-            };
+  describe('test refreshJobApplications action', () => {
+    it('should refresh job applications successfully', async () => {
+      const mockResponse = {
+        data: {
+          data: [
+            {
+              id: 1,
+              companyName: 'Company A',
+              position: 'Developer',
+              status: 1,
+              dateApplied: '2024-01-01',
+              createdAt: '2024-01-01',
+              updatedAt: null,
+            },
+          ],
+          pageNumber: 1,
+          pageSize: 10,
+          totalCount: 1,
+          totalPages: 1,
+        },
+      };
 
-            (axios.isAxiosError as any).mockReturnValue(true);
-            mockGet.mockRejectedValue(mockError);
+      mockGet.mockResolvedValue(mockResponse);
 
-            await store.dispatch(fetchAllJobApplications({}));
+      await store.dispatch(refreshJobApplications({}));
 
-            const state = (store.getState() as any).jobApplications;
-            expect(state.status).toBe('error');
-            expect(state.error).toBe('Network error');
-        });
+      const state = (store.getState() as any).jobApplications;
+      expect(state.applications).toHaveLength(1);
+    });
+  });
 
+  describe('test createJobApplication action', () => {
+    it('should create job application successfully', async () => {
+      const mockResponse = {
+        data: {
+          id: 1,
+          companyName: 'Company A',
+          position: 'Developer',
+          status: 1,
+          dateApplied: '2024-01-01',
+          createdAt: '2024-01-01',
+          updatedAt: null,
+        },
+      };
+
+      mockPost.mockResolvedValue(mockResponse);
+
+      await store.dispatch(
+        createJobApplication({
+          companyName: 'Company A',
+          position: 'Developer',
+          status: 'Applied',
+        })
+      );
+
+      const state = (store.getState() as any).jobApplications;
+      expect(state.applications).toHaveLength(1);
+      expect(state.error).toBeNull();
     });
 
-    describe('test refreshJobApplications action', () => {
-        it('should refresh job applications successfully', async () => {
-            const mockResponse = {
-                data: {
-                    data: [
-                        { id: 1, companyName: 'Company A', position: 'Developer', status: 1, dateApplied: '2024-01-01', createdAt: '2024-01-01', updatedAt: null },
-                    ],
-                    pageNumber: 1,
-                    pageSize: 10,
-                    totalCount: 1,
-                    totalPages: 1,
-                },
-            };
+    it('should handle create error', async () => {
+      const mockError = {
+        response: { data: { message: 'Creation failed' } },
+        message: 'Creation failed',
+      };
 
-            mockGet.mockResolvedValue(mockResponse);
+      (axios.isAxiosError as any).mockReturnValue(true);
+      mockPost.mockRejectedValue(mockError);
 
-            await store.dispatch(refreshJobApplications({}));
+      await store.dispatch(
+        createJobApplication({
+          companyName: 'Company A',
+          position: 'Developer',
+          status: 'Applied',
+        })
+      );
 
-            const state = (store.getState() as any).jobApplications;
-            expect(state.applications).toHaveLength(1);
-        });
+      const state = (store.getState() as any).jobApplications;
+      expect(state.error).toBe('Creation failed');
+    });
+  });
+
+  describe('test updateJobApplication action', () => {
+    it('should update job application successfully', async () => {
+      store.dispatch({
+        type: 'jobApplications/fetchAll/fulfilled',
+        payload: {
+          applications: [
+            {
+              id: 1,
+              companyName: 'Company A',
+              position: 'Developer',
+              status: 'Applied',
+              dateApplied: '2024-01-01',
+              createdAt: '2024-01-01',
+              updatedAt: null,
+            },
+          ],
+          pagination: {
+            pageNumber: 1,
+            pageSize: 10,
+            totalCount: 1,
+            totalPages: 1,
+          },
+        },
+      });
+
+      const mockResponse = {
+        data: {
+          id: 1,
+          companyName: 'Company B',
+          position: 'Senior Developer',
+          status: 2,
+          dateApplied: '2024-01-01',
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-02',
+        },
+      };
+
+      mockPut.mockResolvedValue(mockResponse);
+
+      await store.dispatch(
+        updateJobApplication({
+          id: 1,
+          data: {
+            companyName: 'Company B',
+            position: 'Senior Developer',
+            status: 'Interview',
+          },
+        })
+      );
+
+      const state = (store.getState() as any).jobApplications;
+      expect(state.error).toBeNull();
+      expect(state.applications[0].companyName).toBe('Company B');
     });
 
-    describe('test createJobApplication action', () => {
-        it('should create job application successfully', async () => {
-            const mockResponse = {
-                data: {
-                    id: 1,
-                    companyName: 'Company A',
-                    position: 'Developer',
-                    status: 1,
-                    dateApplied: '2024-01-01',
-                    createdAt: '2024-01-01',
-                    updatedAt: null,
-                },
-            };
+    it('should handle update error', async () => {
+      const mockError = {
+        response: { data: { message: 'Update failed' } },
+        message: 'Update failed',
+      };
 
-            mockPost.mockResolvedValue(mockResponse);
+      (axios.isAxiosError as any).mockReturnValue(true);
+      mockPut.mockRejectedValue(mockError);
 
-            await store.dispatch(
-                createJobApplication({
-                    companyName: 'Company A',
-                    position: 'Developer',
-                    status: 'Applied',
-                })
-            );
+      await store.dispatch(
+        updateJobApplication({
+          id: 1,
+          data: {
+            companyName: 'Company B',
+            position: 'Senior Developer',
+            status: 'Interview',
+          },
+        })
+      );
 
-            const state = (store.getState() as any).jobApplications;
-            expect(state.applications).toHaveLength(1);
-            expect(state.error).toBeNull();
-        });
+      const state = (store.getState() as any).jobApplications;
+      expect(state.error).toBe('Update failed');
+    });
+  });
 
-        it('should handle create error', async () => {
-            const mockError = {
-                response: { data: { message: 'Creation failed' } },
-                message: 'Creation failed',
-            };
+  describe('test deleteJobApplication action', () => {
+    it('should delete job application successfully', async () => {
+      store.dispatch({
+        type: 'jobApplications/fetchAll/fulfilled',
+        payload: {
+          applications: [
+            {
+              id: 1,
+              companyName: 'Company A',
+              position: 'Developer',
+              status: 'Applied',
+              dateApplied: '2024-01-01',
+              createdAt: '2024-01-01',
+              updatedAt: null,
+            },
+          ],
+          pagination: {
+            pageNumber: 1,
+            pageSize: 10,
+            totalCount: 1,
+            totalPages: 1,
+          },
+        },
+      });
 
-            (axios.isAxiosError as any).mockReturnValue(true);
-            mockPost.mockRejectedValue(mockError);
+      mockDelete.mockResolvedValue({});
 
-            await store.dispatch(
-                createJobApplication({
-                    companyName: 'Company A',
-                    position: 'Developer',
-                    status: 'Applied',
-                })
-            );
+      await store.dispatch(deleteJobApplication(1));
 
-            const state = (store.getState() as any).jobApplications;
-            expect(state.error).toBe('Creation failed');
-        });
+      const state = (store.getState() as any).jobApplications;
+      expect(state.applications).toHaveLength(0);
+      expect(state.error).toBeNull();
     });
 
-    describe('test updateJobApplication action', () => {
-        it('should update job application successfully', async () => {
-            store.dispatch({
-                type: 'jobApplications/fetchAll/fulfilled',
-                payload: {
-                    applications: [{
-                        id: 1,
-                        companyName: 'Company A',
-                        position: 'Developer',
-                        status: 'Applied',
-                        dateApplied: '2024-01-01',
-                        createdAt: '2024-01-01',
-                        updatedAt: null,
-                    }],
-                    pagination: { pageNumber: 1, pageSize: 10, totalCount: 1, totalPages: 1 },
-                },
-            });
+    it('should handle delete error', async () => {
+      const mockError = {
+        response: { data: { message: 'Delete failed' } },
+        message: 'Delete failed',
+      };
 
-            const mockResponse = {
-                data: {
-                    id: 1,
-                    companyName: 'Company B',
-                    position: 'Senior Developer',
-                    status: 2,
-                    dateApplied: '2024-01-01',
-                    createdAt: '2024-01-01',
-                    updatedAt: '2024-01-02',
-                },
-            };
+      (axios.isAxiosError as any).mockReturnValue(true);
+      mockDelete.mockRejectedValue(mockError);
 
-            mockPut.mockResolvedValue(mockResponse);
+      await store.dispatch(deleteJobApplication(1));
 
-            await store.dispatch(
-                updateJobApplication({
-                    id: 1,
-                    data: {
-                        companyName: 'Company B',
-                        position: 'Senior Developer',
-                        status: 'Interview',
-                    },
-                })
-            );
-
-            const state = (store.getState() as any).jobApplications;
-            expect(state.error).toBeNull();
-            expect(state.applications[0].companyName).toBe('Company B');
-        });
-
-
-        it('should handle update error', async () => {
-            const mockError = {
-                response: { data: { message: 'Update failed' } },
-                message: 'Update failed',
-            };
-
-            (axios.isAxiosError as any).mockReturnValue(true);
-            mockPut.mockRejectedValue(mockError);
-
-            await store.dispatch(
-                updateJobApplication({
-                    id: 1,
-                    data: {
-                        companyName: 'Company B',
-                        position: 'Senior Developer',
-                        status: 'Interview',
-                    },
-                })
-            );
-
-            const state = (store.getState() as any).jobApplications;
-            expect(state.error).toBe('Update failed');
-        });
+      const state = (store.getState() as any).jobApplications;
+      expect(state.error).toBe('Delete failed');
     });
-
-    describe('test deleteJobApplication action', () => {
-        it('should delete job application successfully', async () => {
-            store.dispatch({
-                type: 'jobApplications/fetchAll/fulfilled',
-                payload: {
-                    applications: [{
-                        id: 1,
-                        companyName: 'Company A',
-                        position: 'Developer',
-                        status: 'Applied',
-                        dateApplied: '2024-01-01',
-                        createdAt: '2024-01-01',
-                        updatedAt: null,
-                    }],
-                    pagination: { pageNumber: 1, pageSize: 10, totalCount: 1, totalPages: 1 },
-                },
-            });
-
-            mockDelete.mockResolvedValue({});
-
-            await store.dispatch(deleteJobApplication(1));
-
-            const state = (store.getState() as any).jobApplications;
-            expect(state.applications).toHaveLength(0);
-            expect(state.error).toBeNull();
-        });
-
-        it('should handle delete error', async () => {
-            const mockError = {
-                response: { data: { message: 'Delete failed' } },
-                message: 'Delete failed',
-            };
-
-            (axios.isAxiosError as any).mockReturnValue(true);
-            mockDelete.mockRejectedValue(mockError);
-
-            await store.dispatch(deleteJobApplication(1));
-
-            const state = (store.getState() as any).jobApplications;
-            expect(state.error).toBe('Delete failed');
-        });
-    });
+  });
 });

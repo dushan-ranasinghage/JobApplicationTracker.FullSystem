@@ -12,16 +12,16 @@ import type { RootState } from '../store';
 const selectPreferencesState = (state: RootState) => state.preferences;
 
 export const selectPageSize = createSelector(
-    [selectPreferencesState],
-    (preferencesState) => preferencesState.pageSize
+  [selectPreferencesState],
+  (preferencesState) => preferencesState.pageSize
 );
 
 export const selectSidebarOpen = createSelector(
-    [selectPreferencesState],
-    (preferencesState) => preferencesState.sidebarOpen
+  [selectPreferencesState],
+  (preferencesState) => preferencesState.sidebarOpen
 );
 
 export const selectCurrentPage = createSelector(
-    [selectPreferencesState],
-    (preferencesState) => preferencesState.currentPage
+  [selectPreferencesState],
+  (preferencesState) => preferencesState.currentPage
 );

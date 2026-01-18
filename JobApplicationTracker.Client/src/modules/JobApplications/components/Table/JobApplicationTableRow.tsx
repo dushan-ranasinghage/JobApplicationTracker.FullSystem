@@ -17,7 +17,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment-timezone';
 
-import type { JobApplication, JobApplicationStatus } from '../../../../redux/types/jobApplications';
+import type {
+  JobApplication,
+  JobApplicationStatus,
+} from '../../../../redux/types/jobApplications';
 import { JobApplicationStatusValues } from '../../../../redux/types/jobApplications';
 import { getStatusColor, getStatusDisplayName } from '../../utils/statusUtils';
 
@@ -42,7 +45,10 @@ const JobApplicationTableRow = ({
         <Select
           value={application.status}
           onChange={(e) =>
-            onStatusChange(application.id, e.target.value as JobApplicationStatus)
+            onStatusChange(
+              application.id,
+              e.target.value as JobApplicationStatus
+            )
           }
           size="small"
           sx={{
@@ -69,7 +75,11 @@ const JobApplicationTableRow = ({
               },
               color: (theme) => {
                 const color = getStatusColor(application.status);
-                if (color === 'success' || color === 'info' || color === 'error') {
+                if (
+                  color === 'success' ||
+                  color === 'info' ||
+                  color === 'error'
+                ) {
                   return theme.palette.common.white;
                 }
                 return theme.palette.text.primary;
@@ -92,7 +102,11 @@ const JobApplicationTableRow = ({
             '& .MuiSelect-icon': {
               color: (theme) => {
                 const color = getStatusColor(application.status);
-                if (color === 'success' || color === 'info' || color === 'error') {
+                if (
+                  color === 'success' ||
+                  color === 'info' ||
+                  color === 'error'
+                ) {
                   return theme.palette.common.white;
                 }
                 return theme.palette.text.primary;
@@ -119,7 +133,10 @@ const JobApplicationTableRow = ({
         </Select>
       </TableCell>
       <TableCell>
-        {moment.utc(application.dateApplied).tz('Pacific/Auckland').format('DD/MM/YYYY, HH:mm')}
+        {moment
+          .utc(application.dateApplied)
+          .tz('Pacific/Auckland')
+          .format('DD/MM/YYYY, HH:mm')}
       </TableCell>
       <TableCell align="right">
         <Tooltip title="Edit">

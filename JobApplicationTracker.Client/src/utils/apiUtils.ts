@@ -10,15 +10,17 @@
  * @param params - Object with query parameters
  * @returns Query string (without leading ?) or empty string
  */
-export function buildQueryString(params: Record<string, string | number | undefined>): string {
+export function buildQueryString(
+  params: Record<string, string | number | undefined>
+): string {
   const queryParams = new URLSearchParams();
-  
+
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined) {
       queryParams.append(key, value.toString());
     }
   });
-  
+
   return queryParams.toString();
 }
 

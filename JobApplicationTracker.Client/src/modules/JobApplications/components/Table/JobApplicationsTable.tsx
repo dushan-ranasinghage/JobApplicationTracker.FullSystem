@@ -17,7 +17,11 @@ import {
   Typography,
 } from '@mui/material';
 
-import type { JobApplication, JobApplicationStatus, PaginationMetadata } from '../../../../redux/types/jobApplications';
+import type {
+  JobApplication,
+  JobApplicationStatus,
+  PaginationMetadata,
+} from '../../../../redux/types/jobApplications';
 import JobApplicationTableRow from './JobApplicationTableRow';
 import JobApplicationsPagination from './JobApplicationsPagination';
 

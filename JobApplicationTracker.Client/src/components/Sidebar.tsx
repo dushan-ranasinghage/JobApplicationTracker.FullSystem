@@ -162,7 +162,8 @@ const Sidebar = ({ open, drawerWidth }: SidebarProps) => {
         <DialogTitle>Reset Preferences</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to reset all preferences to their default values?
+            Are you sure you want to reset all preferences to their default
+            values?
           </DialogContentText>
           <DialogContentText sx={{ mt: 2, mb: 1 }}>
             The following preferences will reset to:
@@ -179,7 +180,11 @@ const Sidebar = ({ open, drawerWidth }: SidebarProps) => {
           <Button onClick={handleResetDialogClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleResetConfirm} color="error" variant="contained">
+          <Button
+            onClick={handleResetConfirm}
+            color="error"
+            variant="contained"
+          >
             Reset
           </Button>
         </DialogActions>
