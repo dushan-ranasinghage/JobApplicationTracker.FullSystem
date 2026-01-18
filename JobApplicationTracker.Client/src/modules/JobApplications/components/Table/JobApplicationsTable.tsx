@@ -17,14 +17,19 @@ import {
   Typography,
 } from '@mui/material';
 
-import type { JobApplication, JobApplicationStatus } from '../../../../redux/types/jobApplications';
+import type { JobApplication, JobApplicationStatus, PaginationMetadata } from '../../../../redux/types/jobApplications';
 import JobApplicationTableRow from './JobApplicationTableRow';
+import JobApplicationsPagination from './JobApplicationsPagination';
 
 interface JobApplicationsTableProps {
   applications: JobApplication[];
   onStatusChange: (id: number, newStatus: JobApplicationStatus) => void;
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+  pagination?: PaginationMetadata | null;
+  applicationsCount?: number;
+  onPageChange?: (pageNumber: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
 }
 
 const JobApplicationsTable = ({
@@ -32,6 +37,10 @@ const JobApplicationsTable = ({
   onStatusChange,
   onEdit,
   onDelete,
+  pagination,
+  applicationsCount,
+  onPageChange,
+  onPageSizeChange,
 }: JobApplicationsTableProps) => {
   if (applications.length === 0) {
     return (
@@ -65,6 +74,16 @@ const JobApplicationsTable = ({
           ))}
         </TableBody>
       </Table>
+      {pagination && (
+        <Box sx={{ p: '10px' }}>
+          <JobApplicationsPagination
+            pagination={pagination}
+            applicationsCount={applicationsCount || applications.length}
+            onPageChange={onPageChange || (() => {})}
+            onPageSizeChange={onPageSizeChange || (() => {})}
+          />
+        </Box>
+      )}
     </TableContainer>
   );
 };
