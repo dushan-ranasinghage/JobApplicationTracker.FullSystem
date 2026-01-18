@@ -3,6 +3,7 @@ using JobApplicationTracker.WebApi.Middleware;
 using JobApplicationTracker.WebApi.Repository;
 using JobApplicationTracker.WebApi.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,13 @@ builder.Services.AddControllers();
 //builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Job Application Tracker API",
+        Version = "v1",
+        Description = "API for managing job applications, statuses, and related operations."
+    });
+
     // Include XML comments for API documentation
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
