@@ -2,6 +2,8 @@
 
 A full-stack application for tracking job applications, built with React (TypeScript) and ASP.NET Core Web API.
 
+<img src="https://i.postimg.cc/xjkhVSGs/system-ui.jpg" width="400" style="display:block; margin:auto;">
+
 ## Quick Start
 
 ### Option 1: Automated Setup (Recommended)
