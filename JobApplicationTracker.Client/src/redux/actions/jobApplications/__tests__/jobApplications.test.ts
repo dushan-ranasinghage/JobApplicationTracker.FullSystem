@@ -16,8 +16,8 @@ import {
   deleteJobApplication,
 } from '../jobApplications';
 import jobApplicationsReducer from '../../../reducers/jobApplications/jobApplications';
-import { mockGet, mockPost, mockPut, mockDelete } from '../../../../testUtils';
-import type { TestStore } from '../../../../testUtils';
+import { mockGet, mockPost, mockPut, mockDelete } from '../../../../utils/testUtils';
+import type { TestStore } from '../../../../utils/testUtils';
 
 describe('jobApplications actions test suite', () => {
   let store: TestStore;

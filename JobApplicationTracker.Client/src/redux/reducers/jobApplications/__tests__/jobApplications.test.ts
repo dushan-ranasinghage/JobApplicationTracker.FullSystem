@@ -17,7 +17,7 @@ import {
 import jobApplicationsReducer, {
   clearJobApplications,
 } from '../jobApplications';
-import type { TestStore } from '../../../../testUtils';
+import type { TestStore } from '../../../../utils/testUtils';
 
 describe('jobApplications reducer test suite', () => {
   let store: TestStore;

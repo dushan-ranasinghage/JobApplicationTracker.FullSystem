@@ -11,6 +11,7 @@ import preferencesReducer, {
   setPageSize,
   setSidebarOpen,
   resetPreferences,
+  setCurrentPage,
 } from '../preferences';
 
 describe('preferences reducer test suite', () => {
@@ -29,6 +30,7 @@ describe('preferences reducer test suite', () => {
     expect(state).toEqual({
       pageSize: 5,
       sidebarOpen: true,
+      currentPage: 1
     });
   });
 
@@ -54,12 +56,14 @@ describe('preferences reducer test suite', () => {
     it('should reset to default values', () => {
       store.dispatch(setPageSize(20));
       store.dispatch(setSidebarOpen(false));
+      store.dispatch(setCurrentPage(5));
 
       store.dispatch(resetPreferences());
 
       const state = (store.getState() as any).preferences;
       expect(state.pageSize).toBe(5);
       expect(state.sidebarOpen).toBe(true);
+      expect(state.currentPage).toBe(1);
     });
   });
 });

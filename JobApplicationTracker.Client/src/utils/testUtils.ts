@@ -6,8 +6,8 @@
  */
 
 import { configureStore } from '@reduxjs/toolkit';
-import { JobApplicationTrackerClient } from './clients/JobApplicationTrackerClient';
-import jobApplicationsReducer from './redux/reducers/jobApplications/jobApplications';
+import { JobApplicationTrackerClient } from '../clients/JobApplicationTrackerClient';
+import jobApplicationsReducer from '../redux/reducers/jobApplications/jobApplications';
 
 export const mockGet = (JobApplicationTrackerClient as any).get;
 export const mockPost = (JobApplicationTrackerClient as any).post;
