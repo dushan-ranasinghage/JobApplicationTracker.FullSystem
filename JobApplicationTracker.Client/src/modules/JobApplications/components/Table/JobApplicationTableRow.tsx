@@ -23,6 +23,7 @@ import type {
 } from '../../../../redux/types/jobApplications';
 import { JobApplicationStatusValues } from '../../../../redux/types/jobApplications';
 import { getStatusColor, getStatusDisplayName } from '../../utils/statusUtils';
+import EllipsisTooltipText from '../../../../components/EllipsisTooltipText';
 
 interface JobApplicationTableRowProps {
   application: JobApplication;
@@ -39,8 +40,12 @@ const JobApplicationTableRow = ({
 }: JobApplicationTableRowProps) => {
   return (
     <TableRow key={application.id} hover>
-      <TableCell>{application.companyName}</TableCell>
-      <TableCell>{application.position}</TableCell>
+      <TableCell>
+        <EllipsisTooltipText text={application.companyName} maxLength={35} />
+      </TableCell>
+      <TableCell>
+        <EllipsisTooltipText text={application.position} maxLength={35} />
+      </TableCell>
       <TableCell>
         <Select
           value={application.status}

@@ -23,7 +23,7 @@ export const validateCompanyName = (value: string): ValidationError => {
   if (value.trim().length < 2) {
     return 'Company name must be at least 2 characters';
   }
-  if (value.trim().length > 100) {
+  if (value.trim().length > 200) {
     return 'Company name must be less than 100 characters';
   }
   return undefined;
@@ -39,7 +39,7 @@ export const validatePosition = (value: string): ValidationError => {
   if (value.trim().length < 2) {
     return 'Position must be at least 2 characters';
   }
-  if (value.trim().length > 100) {
+  if (value.trim().length > 200) {
     return 'Position must be less than 100 characters';
   }
   return undefined;
