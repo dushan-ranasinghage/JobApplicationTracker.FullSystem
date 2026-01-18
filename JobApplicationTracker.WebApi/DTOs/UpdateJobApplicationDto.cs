@@ -13,22 +13,22 @@ namespace JobApplicationTracker.WebApi.DTOs
         /// <summary>
         /// Name of the company
         /// </summary>
-        [Required(ErrorMessage = "Company name is required")]
-        [MaxLength(200, ErrorMessage = "Company name cannot exceed 200 characters")]
+        [property: Required(ErrorMessage = "Company name is required")]
+        [property: MaxLength(200, ErrorMessage = "Company name cannot exceed 200 characters")]
         string CompanyName,
 
         /// <summary>
         /// Job position title
         /// </summary>
-        [Required(ErrorMessage = "Position is required")]
-        [MaxLength(200, ErrorMessage = "Position cannot exceed 200 characters")]
+        [property: Required(ErrorMessage = "Position is required")]
+        [property: MaxLength(200, ErrorMessage = "Position cannot exceed 200 characters")]
         string Position,
 
         /// <summary>
         /// Updated status of the application. Valid values: Applied (1), Interview (2), Offer (3), Rejected (4), Accepted (5)
         /// </summary>
-        [Required(ErrorMessage = "Status is required")]
-        [EnumDataType(typeof(JobApplicationStatus), ErrorMessage = "Invalid status value")]
+        [property: Required(ErrorMessage = "Status is required")]
+        [property: EnumDataType(typeof(JobApplicationStatus), ErrorMessage = "Invalid status value")]
         JobApplicationStatus Status
     );
 }
