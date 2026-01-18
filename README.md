@@ -138,6 +138,7 @@ npm run dev
 - **Module Loader** - Each module has a `ModuleLoader` that handles all data fetching (Redux actions, API calls, polling). Keeps main components focused on rendering
 - **TypeScript + ESLint + Prettier** - Type safety and code quality tools configured
 - **Vite Proxy** - Dev server proxies `/api` requests to backend to avoid CORS issues
+- **User Preferences** - Keeping user preferences in `localStorage` using `redux-persist` to save page size, selected page for userbility 
 
 ## Assumptions
 
@@ -149,6 +150,7 @@ npm run dev
 - **API Design** - RESTful API with standard HTTP methods. Swagger available in development mode
 - **Frontend** - Single Page Application (SPA) with client-side routing. No server-side rendering
 - **Generic Repositories** - Didn't use generic repositories as there is only one controller
+- **Client Side Cache** - Client side caching is not introduced to the table due to the time constraint
 
 ## Notes
 
