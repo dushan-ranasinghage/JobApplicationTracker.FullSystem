@@ -7,9 +7,13 @@
 
 import { useState } from 'react';
 
-import type { JobApplication, JobApplicationStatus } from '../../../redux/types/jobApplications';
-import type { AppDispatch } from '../../../redux/store';
+import type {
+  JobApplication,
+  JobApplicationStatus,
+} from '../../../redux/types/jobApplications';
+import { useAppDispatch } from '../../../redux/store';
 import {
+  refreshJobApplications,
   createJobApplication,
   updateJobApplication,
   deleteJobApplication,
@@ -19,17 +23,30 @@ import {
 import EditJobApplicationModal from '../components/Modals/EditJobApplicationModal';
 import DeleteConfirmationDialog from '../components/Modals/DeleteConfirmationDialog';
 import CreateJobApplicationModal from '../components/Modals/CreateJobApplicationModal';
+import { useSelector } from 'react-redux';
+import {
+  selectCurrentPage,
+  selectPageSize,
+} from '../../../redux/selectors/preferences';
 
 interface UseJobApplicationModalsProps {
   applications: JobApplication[];
-  dispatch: AppDispatch;
 }
 
-export const useJobApplicationModals = ({ applications, dispatch }: UseJobApplicationModalsProps) => {
+export const useJobApplicationModals = ({
+  applications,
+}: UseJobApplicationModalsProps) => {
+  const dispatch = useAppDispatch();
+
+  const pageSize = useSelector(selectPageSize);
+  const pageNumber = useSelector(selectCurrentPage);
+
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
+  const [selectedApplication, setSelectedApplication] =
+    useState<JobApplication | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [applicationToDelete, setApplicationToDelete] = useState<JobApplication | null>(null);
+  const [applicationToDelete, setApplicationToDelete] =
+    useState<JobApplication | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const handleEdit = (id: number) => {
@@ -46,10 +63,12 @@ export const useJobApplicationModals = ({ applications, dispatch }: UseJobApplic
       setApplicationToDelete(application);
       setDeleteDialogOpen(true);
     }
+    dispatch(refreshJobApplications({ pageNumber, pageSize }));
   };
 
   const handleCreate = async (data: CreateJobApplicationData) => {
     await dispatch(createJobApplication(data)).unwrap();
+    dispatch(refreshJobApplications({ pageNumber, pageSize }));
     setCreateModalOpen(false);
   };
 
@@ -59,7 +78,10 @@ export const useJobApplicationModals = ({ applications, dispatch }: UseJobApplic
     setSelectedApplication(null);
   };
 
-  const handleStatusChange = async (id: number, newStatus: JobApplicationStatus) => {
+  const handleStatusChange = async (
+    id: number,
+    newStatus: JobApplicationStatus
+  ) => {
     const application = applications.find((app) => app.id === id);
     if (application) {
       const updateData: UpdateJobApplicationData = {
@@ -79,6 +101,7 @@ export const useJobApplicationModals = ({ applications, dispatch }: UseJobApplic
     if (applicationToDelete) {
       try {
         await dispatch(deleteJobApplication(applicationToDelete.id)).unwrap();
+        dispatch(refreshJobApplications({ pageNumber, pageSize }));
         setDeleteDialogOpen(false);
         setApplicationToDelete(null);
       } catch (error) {

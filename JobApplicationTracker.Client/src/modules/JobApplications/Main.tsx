@@ -7,12 +7,14 @@
 
 import { Container } from '@mui/material';
 
-import type { JobApplication, PaginationMetadata } from '../../redux/types/jobApplications';
+import type {
+  JobApplication,
+  PaginationMetadata,
+} from '../../redux/types/jobApplications';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
 import JobApplicationsHeader from './components/JobApplicationsHeader';
 import JobApplicationsTable from './components/Table/JobApplicationsTable';
-import { useAppDispatch } from '../../redux/store';
 import { useJobApplicationModals } from './hooks/useJobApplicationModals';
 
 interface JobApplicationsMainProps {
@@ -30,10 +32,10 @@ const JobApplicationsMain = ({
   error,
   pagination,
   onPageChange,
-  onPageSizeChange
+  onPageSizeChange,
 }: JobApplicationsMainProps) => {
-  const dispatch = useAppDispatch();
-  const { modals, handleEdit, handleDelete, handleStatusChange, handleCreate } = useJobApplicationModals({ applications, dispatch });
+  const { modals, handleEdit, handleDelete, handleStatusChange, handleCreate } =
+    useJobApplicationModals({ applications });
 
   if (isLoading) {
     return (
