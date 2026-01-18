@@ -136,7 +136,7 @@ const JobApplicationTableRow = ({
         {moment
           .utc(application.dateApplied)
           .tz('Pacific/Auckland')
-          .format('DD/MM/YYYY, HH:mm')}
+          .format('DD MMM YYYY - hh:mm A')}
       </TableCell>
       <TableCell align="right">
         <Tooltip title="Edit">
